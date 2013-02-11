@@ -99,5 +99,6 @@ tramp
 
 ## Doc(astah)
 *.asta.bak
+*.asta.lock
 
 
