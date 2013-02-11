@@ -94,4 +94,10 @@ tramp
 .org-id-locations
 *_archive
 
+## Database
+*.sqlite3
+
+## Doc(astah)
+*.asta.bak
+
 
