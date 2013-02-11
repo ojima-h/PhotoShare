@@ -1,0 +1,32 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use DBIx::Migration;
+use DBIx::Class::Schema::Loader qw/ make_schema_at /;
+use FindBin;
+
+my $dbPath = "dbi:SQLite:$FindBin::Bin/../db/development.sqlite3";
+my $result = 1;
+
+my $m = DBIx::Migration->new(
+    {
+        dsn => $dbPath,
+        dir => "$FindBin::Bin/../db/migrate/sqlite3"
+    }
+);
+
+my $version = $m->version;   # Get current version from database
+
+$result = $m->migrate;
+
+if ($result) {
+    make_schema_at(
+        'Schema',
+        { debug => 1,
+          dump_directory => './lib',
+        },
+        [ $dbPath ]
+        );
+}
