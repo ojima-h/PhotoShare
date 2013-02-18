@@ -1,8 +1,20 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li class="active">
+            %=link_to Home => url_for('/')
+          </li>
+          <li>
+            %=link_to About => url_for('#')
+          </li>
+          <li>
+            %=link_to Contact => url_for('#')
+          </li>
+
+          % if (is_user_authenticated) {
+            <li>
+              %= link_to Logout => url_for('/logout')
+            </li>
+          % }
         </ul>
         <h3 class="muted"><%= $serviceName %></h3>
       </div>

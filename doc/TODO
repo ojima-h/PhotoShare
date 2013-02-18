@@ -1,0 +1,13 @@
+-   現在、
+
+        GET /logout
+
+    によりログアウトしているが、
+
+        DELETE /sessions
+
+    とかでログアウトできるようにしたい。
+    無理ならせめて POST で。
+
+-   Mojolicious::Plugin::CSRFProtect が warining を吐いているので、な
+    んとかする。

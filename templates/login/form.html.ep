@@ -1,0 +1,20 @@
+% layout 'default';
+% title 'Login';
+
+% if (flash('message')) {
+%=tag 'div', id => 'message', class => 'alert alert-error' => flash('message')
+% }
+
+<div>
+  %=form_for '/sessions' => (method => 'post'), id => 'login_form' => begin
+    <label for='name'>name :</label>
+    %=text_field 'name', id => 'name'
+    <br />
+
+    <label for='password'>password :</label>
+    %=password_field 'password', id => 'password'
+    <br />
+
+    <input class='btn' type='submit' value='ログイン'/>
+  % end
+</div>
