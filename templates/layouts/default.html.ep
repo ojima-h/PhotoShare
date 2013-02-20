@@ -8,7 +8,6 @@
     <meta name="author" content="">
 
   	<%= include 'layouts/css' %>
-  	<%= include 'layouts/jslib' %>
   </head>
   <body>
      <div class="container-narrow">
