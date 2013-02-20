@@ -2,6 +2,7 @@ package PhotoShare;
 use Mojo::Base 'Mojolicious';
 
 use PhotoShare::Config;
+use Schema;
 
 # This method will run once at server start
 sub startup {
