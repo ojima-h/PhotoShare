@@ -1,0 +1,4 @@
+db:
+  dsn: 'dbi:SQLite:$FindBin::Bin/../db/development.sqlite3'
+
+session_key: wickedapp

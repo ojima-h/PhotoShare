@@ -102,3 +102,5 @@ tramp
 *.asta.lock
 
 
+## Configuration File
+config.yml
