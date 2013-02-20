@@ -47,6 +47,10 @@ sub startup {
   # Normal route to controller
   $r->get('/')->to('example#welcome');
 
+  # Sign Up
+  $r->get('/signup')->to('signup#form');
+  $r->post('/users')->to('users#create');
+
   # Login / Logout
   $r->get('/login')->to('login#form');
   $r->post('/sessions')->to('sessions#create');

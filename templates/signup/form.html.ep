@@ -1,0 +1,25 @@
+% layout 'default';
+% title 'Signup';
+
+<div>
+  %=form_for '/users' => (method => 'post'), id => 'signup_form' => begin
+    <label for='name'>ユーザID :</label>
+    %=text_field 'name', id => 'name'
+    <br />
+
+    <label for='email'>メールアドレス :</label>
+    %=email_field 'email', id => 'email'
+    <br />
+
+    <label for='password'>パスワード :</label>
+    %=password_field 'password', id => 'password'
+    <br />
+
+    <label for='password-confirm'>パスワード(確認) :</label>
+    %=password_field 'password-confirm', id => 'password-confirm'
+    <br />
+
+    <input class='btn' type='submit' value='ログイン'/>
+  % end
+</div>
+
