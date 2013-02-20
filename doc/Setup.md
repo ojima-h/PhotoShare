@@ -27,5 +27,7 @@ How to Install
     -   Mojolicious::Plugin::TagHelpers
     -   Mojolicious::Plugin::Authentication
     -   Mojolicious::Plugin::CSRFProtect
+    -   YAML::Tiny
+    -   Test::DBIx::Class   <- めっちゃでかい
     
     

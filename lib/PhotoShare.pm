@@ -23,14 +23,19 @@ sub startup {
     'session_key' => $self->config->{session_key},
     'load_user' => sub {
       my ($app, $uid) = @_;
-      return { uid => $uid }
+      return $app->db->resultset('User')->find($uid);
     },
     'validate_user' => sub {
       my ($app, $name, $password, $extradata) = @_;
-      if ( $name eq 'foo' and $password eq 'bar' ) {
-        return $name;
+
+      my $user = $app->db->resultset('User')->search({
+        name => $name,
+        password => $password})->first;
+
+      if ($user) {
+        return $user->id;
       } else {
-        return undef;
+        return undef
       }
     },
   });
@@ -50,7 +55,7 @@ sub startup {
 sub dbconnection {
   my $dbconf = shift;
 
-  Library::Schema->connect(
+  Schema->connect(
     $dbconf->{dsn},
     $dbconf->{user},
     $dbconf->{password},
