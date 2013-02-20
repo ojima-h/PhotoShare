@@ -32,17 +32,17 @@ __PACKAGE__->table("user");
 =head2 name
 
   data_type: 'text'
-  is_nullable: 1
+  is_nullable: 0
 
 =head2 email
 
   data_type: 'text'
-  is_nullable: 1
+  is_nullable: 0
 
 =head2 password
 
   data_type: 'text'
-  is_nullable: 1
+  is_nullable: 0
 
 =head2 created_at
 
@@ -60,11 +60,11 @@ __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "name",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "text", is_nullable => 0 },
   "email",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "text", is_nullable => 0 },
   "password",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "text", is_nullable => 0 },
   "created_at",
   { data_type => "text", is_nullable => 1 },
   "updated_at",
@@ -83,9 +83,35 @@ __PACKAGE__->add_columns(
 
 __PACKAGE__->set_primary_key("id");
 
+=head1 UNIQUE CONSTRAINTS
 
-# Created by DBIx::Class::Schema::Loader v0.07033 @ 2013-02-11 19:29:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:XWJGyHadL0lW0ArcSJSzZg
+=head2 C<email_unique>
+
+=over 4
+
+=item * L</email>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("email_unique", ["email"]);
+
+=head2 C<name_unique>
+
+=over 4
+
+=item * L</name>
+
+=back
+
+=cut
+
+__PACKAGE__->add_unique_constraint("name_unique", ["name"]);
+
+
+# Created by DBIx::Class::Schema::Loader v0.07033 @ 2013-02-21 05:46:05
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iD0TXN2jma0KME7jfO6arQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
