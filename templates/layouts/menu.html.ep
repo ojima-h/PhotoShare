@@ -10,11 +10,13 @@
             %=link_to Contact => url_for('#')
           </li>
 
+          <li>
           % if (is_user_authenticated) {
-            <li>
-              %= link_to Logout => url_for('/logout')
-            </li>
+            %= link_to Logout => url_for('/logout')
+          % } else {
+            %= link_to Login => url_for('/login')
           % }
+          </li>
         </ul>
         <h3 class="muted"><%= $serviceName %></h3>
       </div>

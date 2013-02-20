@@ -14,6 +14,13 @@
 
       <%= include 'layouts/menu', serviceName=>'Photo Share' %>
 
+      % for my $message (qw/ alert-success alert-error/) {
+        % if (flash($message)) {
+          %=tag 'div', id => 'message', class => "alert $message" => flash($message)
+        % }
+      %}
+
+
       <%= content %>
       
       <!--FOOTER-->

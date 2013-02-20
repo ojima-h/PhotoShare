@@ -10,7 +10,7 @@ sub create {
   if ( $self->authenticate($name, $password) ) {
     $self->redirect_to('/');
   } else {
-    $self->flash(message => 'ユーザ名またはパスワードが間違っています');
+    $self->flash('alert-error' => 'ユーザ名またはパスワードが間違っています');
     $self->redirect_to('/login');
   }
 }
@@ -18,7 +18,7 @@ sub create {
 sub destroy {
   my $self = shift;
 
-  $self->flash(message => 'ログアウトしました');
+  $self->flash('alert-success' => 'ログアウトしました');
   $self->logout;
   $self->redirect_to('/login');
 }
