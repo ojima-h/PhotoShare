@@ -1,0 +1,11 @@
+DROP TABLE groups;
+
+
+
+
+
+
+
+
+
+
