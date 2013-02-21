@@ -5,7 +5,7 @@ use Test::Mojo;
 
 use YAML::Tiny;
 use Test::DBIx::Class {
-  schema_class => 'Schema',
+  schema_class => 'PhotoShareModel::Schema',
   connect_info => YAML::Tiny->read("$FindBin::Bin/../config.yml")->[0]{test}{db},
 };
 

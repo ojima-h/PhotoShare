@@ -2,7 +2,7 @@ package PhotoShare;
 use Mojo::Base 'Mojolicious';
 
 use PhotoShare::Config;
-use Schema;
+use PhotoShareModel::Schema;
 
 # This method will run once at server start
 sub startup {
@@ -60,7 +60,7 @@ sub startup {
 sub dbconnection {
   my $self = shift;
   my ($dsn, $user, $password) = @{ $self->config->{db} };
-  Schema->connect(
+  PhotoShareModel::Schema->connect(
     $dsn,
     $user,
     $password,

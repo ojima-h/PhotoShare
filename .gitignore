@@ -96,6 +96,10 @@ tramp
 
 ## Database
 *.sqlite3
+share/photosharemodel-schema/*
+share/photosharemodel-schema.db
+share/photosharemodel-schema-test.db
+
 
 ## Doc(astah)
 *.asta.bak
