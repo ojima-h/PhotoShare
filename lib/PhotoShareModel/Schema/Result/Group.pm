@@ -24,4 +24,11 @@ __PACKAGE__->has_many(
   'events' => 'PhotoShareModel::Schema::Result::Event', 'group_id'
 );
 
+__PACKAGE__->has_many(
+  user_group_rs => 'PhotoShareModel::Schema::Result::UserGroup', 'group_id'
+);
+__PACKAGE__->many_to_many(
+  users => user_group_rs => '_user'
+);
+  
 1;

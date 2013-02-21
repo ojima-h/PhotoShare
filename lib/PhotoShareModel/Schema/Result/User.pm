@@ -28,4 +28,11 @@ __PACKAGE__->add_unique_constraints(
   ['email'],
 );
 
+__PACKAGE__->has_many(
+  user_group_rs => 'PhotoShareModel::Schema::Result::UserGroup', 'user_id'
+);
+__PACKAGE__->many_to_many(
+  groups => user_group_rs => '_group'
+);
+
 1;
