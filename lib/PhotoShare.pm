@@ -1,22 +1,24 @@
 package PhotoShare;
 use Mojo::Base 'Mojolicious';
 
-use PhotoShare::Config;
+use PhotoShareModel;
 use PhotoShareModel::Schema;
 
 # This method will run once at server start
 sub startup {
   my $self = shift;
 
-  PhotoShare::Config->load($self);
+  # Initialize PhotoShareModel
+  my $model = PhotoShareModel->new($self->mode);
+  $self->helper(model => sub { $model });
+  $self->helper(db => sub { $model->db });
+  $self->config( $model->config );
 
   # Documentation browser under "/perldoc"
   $self->plugin('PODRenderer');
 
   # Protection from CSRF attack.
   $self->plugin('CSRFProtect');
-
-  $self->helper(db => sub { $self->dbconnection });
 
   # User Authentication
   $self->plugin('authentication' => {
@@ -55,17 +57,6 @@ sub startup {
   $r->get('/login')->to('login#form');
   $r->post('/sessions')->to('sessions#create');
   $r->get('/logout')->to('sessions#destroy');
-}
-
-sub dbconnection {
-  my $self = shift;
-  my ($dsn, $user, $password) = @{ $self->config->{db} };
-  PhotoShareModel::Schema->connect(
-    $dsn,
-    $user,
-    $password,
-    { AutoCommit => 1 },
-  );
 }
 
 1;
