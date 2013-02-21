@@ -11,11 +11,16 @@ sub new {
   }, $class;
 }
 
+sub app   { shift->{app} }
 sub config { shift->{app}->config }
-sub db    { shift->{app}->db }
-sub User  { shift->{app}->db->resultset('User'); }
-sub Group { shift->{app}->db->resultset('Group'); }
-sub Event { shift->{app}->db->resultset('Event'); }
+sub db    {
+  my $self = shift;
+  if (my $table = shift) {
+    $self->{app}->db->resultset($table);
+  } else {
+    $self->{app}->db;
+  }
+}
 
 1;
 

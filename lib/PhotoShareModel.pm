@@ -6,6 +6,7 @@ use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors(qw/ mode /);
 
 use PhotoShareModel::User;
+use PhotoShareModel::Group;
 
 use PhotoShareModel::Config;
 
@@ -33,6 +34,7 @@ sub db {
 }
 
 sub User { PhotoShareModel::User->new(shift) }
+sub Group { PhotoShareModel::Group->new(shift) }
 
 
 1;

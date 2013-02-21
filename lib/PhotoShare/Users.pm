@@ -5,7 +5,12 @@ sub create {
   my $self = shift;
 
   if ($self->param('password') eq $self->param('password-confirm')) {
-    my $user = $self->model->User->create($self->param(['name', 'email', 'password']));
+    my ($name, $email, $password) = $self->param([qw/ name email password /]);
+    my $user = $self->model->User->create(
+      name     => $name,
+      email    => $email,
+      password => $password,
+    );
 
     if ($user) {
       $self->flash('alert-success' => 'ユーザ登録が完了しました');
