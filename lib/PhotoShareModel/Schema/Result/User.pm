@@ -20,6 +20,10 @@ __PACKAGE__->add_columns(
   password => {
     data_type =>  'text',
   },
+  default_group_id => {
+    data_type => 'integer',
+    is_nullable => 1,
+  },
 );
 
 __PACKAGE__->set_primary_key('id');
@@ -33,6 +37,10 @@ __PACKAGE__->has_many(
 );
 __PACKAGE__->many_to_many(
   groups => user_group_rs => '_group'
+);
+
+__PACKAGE__->belongs_to(
+  default_group => 'PhotoShareModel::Schema::Result::Group' => 'default_group_id'
 );
 
 1;

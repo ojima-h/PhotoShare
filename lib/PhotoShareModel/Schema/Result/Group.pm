@@ -14,6 +14,10 @@ __PACKAGE__->add_columns(
   name => {
     data_type => 'text',
   },
+  default_event_id => {
+    data_type => 'integer',
+    is_nullable => 1,
+  }
 );
 
 __PACKAGE__->set_primary_key('id');
@@ -30,5 +34,12 @@ __PACKAGE__->has_many(
 __PACKAGE__->many_to_many(
   users => user_group_rs => '_user'
 );
-  
+
+__PACKAGE__->might_have(
+  defalt_user => 'PhotoShareModel::Schema::Result::User' => 'default_group_id'
+);
+
+__PACKAGE__->belongs_to(
+  default_event => 'PhotoShareModel::Schema::Result::Event' => 'default_event_id'
+);
 1;
