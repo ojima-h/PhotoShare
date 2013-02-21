@@ -3,6 +3,12 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 
+use YAML::Tiny;
+use Test::DBIx::Class {
+  schema_class => 'Schema',
+  connect_info => YAML::Tiny->read("$FindBin::Bin/../config.yml")->[0]{test}{db},
+};
+
 my $t = Test::Mojo->new('PhotoShare');
 
 $t->get_ok('/signup')

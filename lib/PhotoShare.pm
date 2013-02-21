@@ -16,7 +16,7 @@ sub startup {
   # Protection from CSRF attack.
   $self->plugin('CSRFProtect');
 
-  $self->helper(db => sub { dbconnection($self->config->{db})});
+  $self->helper(db => sub { $self->dbconnection });
 
   # User Authentication
   $self->plugin('authentication' => {
@@ -58,12 +58,12 @@ sub startup {
 }
 
 sub dbconnection {
-  my $dbconf = shift;
-
+  my $self = shift;
+  my ($dsn, $user, $password) = @{ $self->config->{db} };
   Schema->connect(
-    $dbconf->{dsn},
-    $dbconf->{user},
-    $dbconf->{password},
+    $dsn,
+    $user,
+    $password,
     { AutoCommit => 1 },
   );
 }

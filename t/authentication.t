@@ -3,18 +3,18 @@ use Mojo::Base -strict;
 use Test::More;
 use Test::Mojo;
 
+use YAML::Tiny;
 use Test::DBIx::Class {
   schema_class => 'Schema',
-  connect_info => ['dbi:SQLite:dbname=./db/test.sqlite3','',''],
+  connect_info => YAML::Tiny->read("$FindBin::Bin/../config.yml")->[0]{test}{db},
 };
 
 my $t = Test::Mojo->new('PhotoShare');
-$t->app->config->{db}{dsn} = 'dbi:SQLite:dbname=./db/test.sqlite3';
 
 fixtures_ok [
   User => [
-    [qw/ name password /],
-    [qw/ bob secret /],
+    [qw/ name password email /],
+    [qw/ bob secret test\@examle.com /],
   ],
 ];
 
