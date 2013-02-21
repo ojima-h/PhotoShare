@@ -5,6 +5,8 @@ use warnings;
 use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors(qw/ mode /);
 
+use PhotoShareModel::User;
+
 use PhotoShareModel::Config;
 
 sub new {
@@ -29,6 +31,8 @@ sub db {
     { AutoCommit => 1 },
   );
 }
+
+sub User { PhotoShareModel::User->new(shift) }
 
 
 1;
