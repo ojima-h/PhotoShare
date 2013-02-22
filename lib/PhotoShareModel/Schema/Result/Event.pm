@@ -28,4 +28,8 @@ __PACKAGE__->belongs_to(
   group => 'PhotoShareModel::Schema::Result::Group', 'group_id'
 );
 
+__PACKAGE__->has_many(
+  photos => 'PhotoShareModel::Schema::Result::Photo', 'event_id'
+);
+
 1;
