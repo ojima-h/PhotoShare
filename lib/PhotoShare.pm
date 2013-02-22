@@ -57,6 +57,10 @@ sub startup {
   $r->get('/login')->to('login#form');
   $r->post('/sessions')->to('sessions#create');
   $r->get('/logout')->to('sessions#destroy');
+
+  # Photos
+  $r->get('/photos/new')->to('photos#new');
+  $r->post('/photos')->to('photos#create');
 }
 
 1;

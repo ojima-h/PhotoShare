@@ -108,3 +108,7 @@ share/photosharemodel-schema-test.db
 
 ## Configuration File
 config.yml
+
+## Image files
+share/photos/development/*
+share/photos/test/*

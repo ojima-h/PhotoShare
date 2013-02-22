@@ -1,0 +1,13 @@
+% layout 'default';
+% title '写真のアップロード';
+
+<div>
+  %=form_for '/photos' => (enctype => 'multipart/form-data', method => 'POST'), id => 'new_photos_form' => begin
+    <label for='photo-data'>写真 :</label>
+    %=file_field 'photo-data', id => 'photo-data', multiple => 'multiple'
+    <br />
+
+    <input class='btn' type='submit' value='アップロード'/>
+  % end
+</div>
+

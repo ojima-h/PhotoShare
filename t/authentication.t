@@ -11,12 +11,12 @@ use Test::DBIx::Class {
 
 my $t = Test::Mojo->new('PhotoShare');
 
-fixtures_ok [
+fixtures_ok {
   User => [
     [qw/ name password email /],
     [qw/ bob secret test\@examle.com /],
   ],
-];
+};
 
 $t->ua->max_redirects(0);
 

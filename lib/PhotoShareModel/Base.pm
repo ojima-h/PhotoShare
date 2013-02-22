@@ -2,6 +2,8 @@ package PhotoShareModel::Base;
 use strict;
 use warnings;
 
+use Carp qw/carp croak/;
+
 sub new {
   my $class = shift;
   my $app   = shift;

@@ -18,7 +18,7 @@ my %counts = (
 );
 
 my $model = PhotoShareModel->new('test');
-$model->User->create(
+my $user = $model->User->create(
   name     => 'user_name',
   email    => 'email',
   password => 'secret'
@@ -28,4 +28,15 @@ is User->count,  $counts{User} + 1;
 is Group->count, $counts{Group} + 1;
 is Event->count, $counts{Event} + 1;
 
+ok $user->default_group;
+ok $user->default_group->default_event;
+
 done_testing;
+
+
+
+
+
+
+
+

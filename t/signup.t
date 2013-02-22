@@ -11,6 +11,11 @@ use Test::DBIx::Class {
 
 my $t = Test::Mojo->new('PhotoShare');
 
+my $token;
+$t->app->hook(after_render => sub {
+                    $token = shift->csrftoken;
+                  });
+
 $t->get_ok('/signup')
   ->status_is(200)
   ->element_exists('form#signup_form input[name=name]')
@@ -18,16 +23,28 @@ $t->get_ok('/signup')
   ->element_exists('form#signup_form input[name=password-confirm]')
   ->element_exists('form#signup_form input[name=email]');
 
-my $token = $t->tx->res->dom->at('form#signup_form input[name=csrftoken]')->attrs('value');
-
 $t->post_ok('/users', form => { name => 'bob',
-                                 password => 'pass',
-                                 'password-confirm' => 'pass',
-                                 email => 'test@example.com',
-                                 csrftoken => $token,
+                                password => 'pass',
+                                'password-confirm' => 'pass',
+                                email => 'test@example.com',
+                                csrftoken => $token,
                                })
   ->status_is(302)
   ->header_like(Location => qr#http://localhost:\d+/login/?$#);
+
+$t->get_ok('/login');
+my $user;
+$t->app->hook(after_dispatch => sub {
+               $user = shift->current_user;
+             });
+$t->post_ok('/sessions', form => {
+  name      => 'bob',
+  password  => 'pass',
+  csrftoken => $token,
+});
+ok $user;
+ok $user->default_group;
+ok $user->default_group->default_event;;
 
 done_testing;
 

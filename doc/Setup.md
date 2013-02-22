@@ -23,11 +23,12 @@ How to Install
     -   Mojolicious
     -   DBIx::Class
     -   DBIx::Class::Schema::Loader
-    -   DBIx::Migration
+    -   DBIx::CLass::Migration
     -   Mojolicious::Plugin::TagHelpers
     -   Mojolicious::Plugin::Authentication
     -   Mojolicious::Plugin::CSRFProtect
     -   YAML::Tiny
     -   Test::DBIx::Class   <- めっちゃでかい
+    -   File::MMagic
     
     
