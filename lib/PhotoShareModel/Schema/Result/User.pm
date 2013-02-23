@@ -33,14 +33,21 @@ __PACKAGE__->add_unique_constraints(
 );
 
 __PACKAGE__->has_many(
-  user_group_rs => 'PhotoShareModel::Schema::Result::UserGroup', 'user_id'
+  _user_group_rs => 'PhotoShareModel::Schema::Result::UserGroup', 'user_id'
 );
 __PACKAGE__->many_to_many(
-  groups => user_group_rs => '_group'
+  groups => _user_group_rs => '_group'
 );
 
 __PACKAGE__->belongs_to(
   default_group => 'PhotoShareModel::Schema::Result::Group' => 'default_group_id'
+);
+
+__PACKAGE__->has_many(
+  _user_photo_rs => 'PhotoShareModel::Schema::Result::UserPhoto', 'user_id'
+);
+__PACKAGE__->many_to_many(
+  photos => _user_photo_rs => '_photo'
 );
 
 1;
