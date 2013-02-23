@@ -61,6 +61,12 @@ sub startup {
   # Photos
   $r->get('/photos/new')->to('photos#new');
   $r->post('/photos')->to('photos#create');
+  $r->get('/photos')->to('photos#index');
+  $r->route('/photos/:id',
+             id => qr/\d+/,
+             format => [qw(png jpeg jpg gif)])
+    ->via('GET')
+    ->to('photos#show');
 }
 
 1;

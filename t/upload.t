@@ -47,8 +47,15 @@ subtest 'When autheticated' => sub {
               form => {'photo-data' => [ {file => "$FindBin::Bin/images/mojo.png"},
                                          {file => "$FindBin::Bin/images/camel.png"} ],
                        csrftoken => $token})
-    ->status_is(200);
-  is Photo->count, $count + 2;
+    ->status_is(302)
+    ->header_like(Location => qr#http://localhost:\d+/photos$#);
+
+  my $user = $t->app->model->db->resultset('User')->search({name => 'user'})->first;
+  is $user->photos->count, 2
 };
 
 done_testing;
+
+
+
+

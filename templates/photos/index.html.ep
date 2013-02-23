@@ -1,0 +1,14 @@
+% layout 'default';
+% title '写真';
+
+<div class='photos'>
+  <ul class='thumbnails'>
+    % for my $photo_name (@{ stash('photo_names') }) {
+    <li class='span2'>
+      <div class='thumbnail'>
+        %=image "/photos/$photo_name", alt => $photo_name
+      </div>
+    </li>
+    % }
+  </ul>
+</div>

@@ -30,10 +30,20 @@ sub new {
   bless {
     mode => $mode,
     config => $config,
-  };
+  }, $class;
 }
 
-sub config { shift->{config} }
+sub config {
+  my $self = shift;
+
+  if (@_ == 0) {
+    $self->{config};
+  } elsif (@_ == 1) {
+    $self->{config}->{$_[0]};
+  } elsif (@_) {
+    map { $self->{config}->{$_} } @_;
+  }
+}
 
 sub db {
   my $self = shift;
