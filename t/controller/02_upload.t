@@ -26,8 +26,7 @@ change_ok(sub { Photo->count }, 2,
                                             {file => $ENV{MOJO_APP_ROOT} . "/../t/images/camel.png"} ],
                           csrftoken => $t->csrftoken
                         })
-              ->status_is(302)
-              ->header_like(Location => qr#http://localhost:\d+/photos$#);
+              ->redirect_to(qr#http://localhost:\d+/photos$#);
           });
 
 done_testing;

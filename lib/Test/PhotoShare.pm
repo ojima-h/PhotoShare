@@ -69,3 +69,77 @@ sub change_ok {
 }
 
 1;
+
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+Test::PhotoShare - Test utilities for PhotoShare app.
+
+=head1 SYNOPSIS
+
+  my $t = Test::PhotoShare->new('PhotoShare');
+
+  $t->prepare_user(
+    name => 'user',
+    email => 'user@example.com',
+    password => 'secret',
+  );
+
+  $t->login_ok('user', 'secret');
+
+  $t->get_ok('/photos/new')
+    ->status_is(200)
+    ->element_exists('form');
+
+  change_ok(sub { Photo->count }, 2,
+            sub {
+              $t->post_ok('/photos',
+                          form => {
+                            'photo-data' => [ {file => $ENV{MOJO_APP_ROOT} . "/../t/images/mojo.png"},
+                                              {file => $ENV{MOJO_APP_ROOT} . "/../t/images/camel.png"} ],
+                            csrftoken => $t->csrftoken
+                          })
+                ->redirect_to(qr#http://localhost:\d+/photos$#);
+            });
+
+=head1 DESCRIPTION
+
+PhotoShare用のテストユーティリティを提供します。
+
+いくつかのメソッドを除き、ほとんどのメソッドの呼び出しは L<Test::Mojo>
+のインスタンスに移譲されます。
+
+インクルードされたときに、L<Test::DBIx::Class> をインクルードし、データベースとの接続を確立します。
+各テーブルのSchemaと C<Test::DBIx::Class::fixture_ok> をエクスポートします。
+
+=head1 METHODS
+
+=head2 new
+
+  my $t = Test::PhotoShare->new('PhotoShare')
+
+=head2 csrftoken
+
+  $t->csrftoken
+
+L<Test::PhotoShare> は、リクエストがある度、CSRF対策のためのトークンを取得します。
+
+=head2 current_user
+
+L<Test::PhotoShare> は、リクエストがある度、現在のユーザを取得します。
+ログインしていない状態であれば、C<undef> を返します。
+
+=head2 prepare_user
+
+=head2 login_ok
+
+=head2 change_ok
+
+  change_ok(exp, num, operation);
+
+C<exp> と C<operation> はコードレフです。
+
+C<operation> 実行前後で、C<exp> を評価した結果が C<num> だけ違うことを確かめます。
