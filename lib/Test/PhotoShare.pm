@@ -49,13 +49,23 @@ sub prepare_user {
 sub login_ok {
   my ($self, $name, $password) = @_;
 
-  $self->get_ok('/login');
+  $self->get_ok('/login')->status_is(200);
 
   $self->post_ok('/sessions', form => {
     name => $name,
     password => $password,
-    csrftoken => $self->csrftoken
+    csrftoken => $self->csrftoken,
   });
+
+  is $self->current_user;
+
+  $self;
+}
+
+sub logout_ok {
+  my $self = shift;
+  $self->get_ok('/logout');
+  $self;
 }
 
 sub change_ok {
@@ -65,7 +75,19 @@ sub change_ok {
   $operation->();
   my $after =  $exp->();
 
-  is $after, $before + $count, "Expected changes occurred"
+  is $after, $before + $count, "Expected changes occurred";
+}
+
+sub upload_photos {
+  my $self = shift;
+  my @photo_data = map { {file => File::Spec->catfile($ENV{MOJO_APP_ROOT}, '/../t/images/', $_)} } @_;
+
+  $self->get_ok('/photos/new')->status_is(200);
+  $self->post_ok('/photos',
+                   form => {'photo-data' => \@photo_data,
+                            csrftoken => $self->csrftoken});
+
+  $self;
 }
 
 1;

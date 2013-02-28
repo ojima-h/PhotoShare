@@ -46,6 +46,28 @@ sub startup {
   # Router
   my $r = $self->routes;
 
+  my @open_paths = (
+    [qw(GET /)],
+    [qw(GET /login)],
+    [qw(POST /sessions)],
+    [qw(GET  /signup)],
+    [qw(POST /users)],
+  );
+  my $is_open = sub {
+    my $c = shift;
+    grep { $c->req->method eq $_->[0] and $c->req->url->path eq $_->[1] } @open_paths;
+  };
+
+  $r = $r->bridge('/')
+    ->to(cb => sub {
+           my $self = shift;
+           $self->app->log->debug("[PATH] " . $self->req->url->path);
+           $self->app->log->debug("[AUTH] " . $self->is_user_authenticated);
+           $self->redirect_to('/login') and return 0
+             unless($is_open->($self) or $self->is_user_authenticated);
+           return 1;
+         });
+
   # Normal route to controller
   $r->get('/')->to('example#welcome');
 
