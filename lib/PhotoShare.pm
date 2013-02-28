@@ -89,6 +89,10 @@ sub startup {
              format => [qw(png jpeg jpg gif)])
     ->via('GET')
     ->to('photos#show');
+
+  # Events
+  $r->get('/events/new')->to('events#new');
+  $r->post('/events')->to('events#create');
 }
 
 1;

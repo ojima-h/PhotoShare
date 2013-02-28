@@ -57,7 +57,7 @@ sub login_ok {
     csrftoken => $self->csrftoken,
   });
 
-  is $self->current_user;
+  ok $self->current_user;
 
   $self;
 }

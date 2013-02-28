@@ -3,14 +3,14 @@
           <li class="active">
             %=link_to Home => url_for('/')
           </li>
-          <li>
-            %=link_to About => url_for('#')
-          </li>
-          <li>
-            %=link_to Contact => url_for('#')
-          </li>
 
           % if (is_user_authenticated) {
+            <li>
+              %= link_to Upload => url_for('/photos/new')
+            </li>
+            <li>
+              %= link_to Photos => url_for('/photos')
+            </li>
             <li>
               %= link_to Logout => url_for('/logout')
             </li>

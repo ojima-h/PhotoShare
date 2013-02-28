@@ -11,6 +11,8 @@ __PACKAGE__->mk_accessors(qw/ mode /);
 
 use PhotoShareModel::User;
 use PhotoShareModel::Group;
+use PhotoShareModel::Event;
+use PhotoShareModel::Photo;
 
 use PhotoShareModel::Config;
 
@@ -19,7 +21,7 @@ sub new {
   my $mode = shift;
 
   my $config = PhotoShareModel::Config->load($mode);
-  $config->{root} = our $ROOT;
+  $config->{root} = $ENV{MOJO_APP_ROOT};
   $config->{photo_dir} = File::Spec->catfile($ENV{MOJO_APP_ROOT}, '..', 'share', 'photos', $mode);
 
   bless {
@@ -53,6 +55,7 @@ sub db {
 
 sub User { PhotoShareModel::User->new(shift) }
 sub Group { PhotoShareModel::Group->new(shift) }
+sub Event { PhotoShareModel::Event->new(shift) }
 sub Photo { PhotoShareModel::Photo->new(shift) }
 
 1;
