@@ -11,7 +11,7 @@ sub create {
   my $group = $param{user}->default_group;
 
   $self->db('Event')->create({
-    name => "default: " . $param{name},
+    name => $param{name},
     group_id => $group->id,
   });
 }

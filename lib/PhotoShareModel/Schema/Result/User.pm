@@ -50,4 +50,11 @@ __PACKAGE__->many_to_many(
   photos => _user_photo_rs => '_photo'
 );
 
+__PACKAGE__->has_many(
+  _user_event_rs => 'PhotoShareModel::Schema::Result::UserEvent', 'user_id'
+);
+__PACKAGE__->many_to_many(
+  events => _user_event_rs => '_event'
+);
+
 1;

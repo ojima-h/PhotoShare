@@ -11,6 +11,20 @@
             <li>
               %= link_to Photos => url_for('/photos')
             </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                Event
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li>
+                  %= link_to 'イベントを作成' => url_for('/events/new');
+                </li>
+                <li>
+                  %= link_to 'イベント一覧' => url_for('/events');
+                </li>
+              </ul>
+            </li>
             <li>
               %= link_to Logout => url_for('/logout')
             </li>

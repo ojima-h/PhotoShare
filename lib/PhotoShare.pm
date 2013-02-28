@@ -93,6 +93,7 @@ sub startup {
   # Events
   $r->get('/events/new')->to('events#new');
   $r->post('/events')->to('events#create');
+  $r->get('/events')->to('events#index');
 }
 
 1;

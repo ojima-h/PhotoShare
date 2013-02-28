@@ -1,0 +1,14 @@
+% layout 'default';
+% title 'イベント';
+
+<div>
+  <ul>
+    % for my $event (@{ $self->stash('events') }) {
+    <li>
+      %= $event->name
+    </li>
+    % }
+  </ul>
+</div>
+
+

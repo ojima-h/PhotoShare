@@ -1,13 +1,23 @@
 package PhotoShare::Events;
 use Mojo::Base 'Mojolicious::Controller';
 
+sub index {
+  my $self = shift;
+  my $user = $self->current_user;
+
+  my @events = $user->events->all;
+
+  $self->stash(events => \@events);
+  $self->render;
+}
+
 sub create {
   my $self = shift;
-  my $event_name = $self->param('event_name');
+  my $event_name = $self->param('event-name');
 
   my $event = $self->model->Event->create(
     name => $event_name,
-    user => $self->user,
+    user => $self->current_user,
   );
 
   if ($event) {

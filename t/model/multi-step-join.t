@@ -26,4 +26,11 @@ ok (my $photo = Photo->create({
 can_ok $user, 'photos';
 ok $user->photos->find($photo->id);
 
+ok (my $event = Event->create({
+  name => 'Event Name',
+  group_id => $user->default_group->id,
+}));
+can_ok $user, 'events';
+ok $user->events->find({name => 'Event Name'});
+
 done_testing;
