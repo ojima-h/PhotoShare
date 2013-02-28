@@ -9,6 +9,7 @@ use lib "$FindBin::Bin/../lib";
 # Start commands for application
 require Mojolicious::Commands;
 
+$ENV{MOJO_APP_ROOT} = "$FindBin::Bin/../lib";
 $ENV{MOJO_MODE} = 'test' if defined $ARGV[0] and $ARGV[0] eq 'test';
 
 Mojolicious::Commands->start_app('PhotoShare');

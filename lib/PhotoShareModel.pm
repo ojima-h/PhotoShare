@@ -4,11 +4,6 @@ use warnings;
 
 use Carp qw/ carp croak /;
 
-BEGIN {
-  use FindBin;
-  our $ROOT = $FindBin::Bin;
-}
-
 use File::Spec;
 
 use base 'Class::Accessor::Fast';
@@ -25,7 +20,7 @@ sub new {
 
   my $config = PhotoShareModel::Config->load($mode);
   $config->{root} = our $ROOT;
-  $config->{photo_dir} = File::Spec->catfile($ROOT, '..', 'share' ,  'photos', $mode);
+  $config->{photo_dir} = File::Spec->catfile($ENV{MOJO_APP_ROOT}, '..', 'share', 'photos', $mode);
 
   bless {
     mode => $mode,

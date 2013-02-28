@@ -1,20 +1,9 @@
 use Mojo::Base -strict;
 
 use Test::More;
-use Test::Mojo;
+use Test::PhotoShare;
 
-use YAML::Tiny;
-use Test::DBIx::Class {
-  schema_class => 'PhotoShareModel::Schema',
-  connect_info => YAML::Tiny->read("$FindBin::Bin/../config.yml")->[0]{test}{db},
-};
-
-my $t = Test::Mojo->new('PhotoShare');
-
-my $token;
-$t->app->hook(after_render => sub {
-                    $token = shift->csrftoken;
-                  });
+my $t = Test::PhotoShare->new('PhotoShare');
 
 $t->get_ok('/signup')
   ->status_is(200)
@@ -27,24 +16,20 @@ $t->post_ok('/users', form => { name => 'bob',
                                 password => 'pass',
                                 'password-confirm' => 'pass',
                                 email => 'test@example.com',
-                                csrftoken => $token,
+                                csrftoken => $t->csrftoken,
                                })
-  ->status_is(302)
-  ->header_like(Location => qr#http://localhost:\d+/login/?$#);
+  ->redirect_to(qr#http://localhost:\d+/login/?$#);
 
 $t->get_ok('/login');
-my $user;
-$t->app->hook(after_dispatch => sub {
-               $user = shift->current_user;
-             });
 $t->post_ok('/sessions', form => {
   name      => 'bob',
   password  => 'pass',
-  csrftoken => $token,
+  csrftoken => $t->csrftoken,
 });
-ok $user;
-ok $user->default_group;
-ok $user->default_group->default_event;;
+
+ok $t->current_user;
+ok $t->current_user->default_group;
+ok $t->current_user->default_group->default_event;;
 
 done_testing;
 
