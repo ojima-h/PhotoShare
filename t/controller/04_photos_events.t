@@ -14,16 +14,27 @@ $t->prepare_user(
 
 $t->login_ok('user', 'secret');
 
+my $event = $t->app->model->Event->create(
+  name => 'Event 1',
+  user => $t->current_user,
+);
+
 $t->get_ok('/photos/new')
-  ->status_is(200)
-  ->element_exists('form[action=/photos]')
-  ->element_exists('form input#photo-data');
+  ->status_is(200);
 
 my $default_event = $t->current_user->default_group->default_event;
-change_ok(sub { $default_event->photos->count }, 2,
+my $custom_event = $t->current_user->events->find({name => 'Event 1'});
+cmp_deeply($t->stash->{'events_info'},
+           [
+             [$default_event->name => $default_event->id],
+             [$custom_event->name => $custom_event->id],
+           ]);
+
+change_ok(sub { $event->photos->count }, 2,
           sub {
             $t->post_ok('/photos',
                         form => {
+                          'event-id'   => $event->id,
                           'photo-data' => [ {file => $ENV{MOJO_APP_ROOT} . "/../t/images/mojo.png"},
                                             {file => $ENV{MOJO_APP_ROOT} . "/../t/images/camel.png"} ],
                           csrftoken => $t->csrftoken

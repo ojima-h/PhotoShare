@@ -6,36 +6,54 @@ use File::MMagic;
 
 use PhotoShareModel::Photo;
 
+sub build {
+  my $self = shift;
+  my $user = $self->current_user;
+
+  $self->stash(events_info => $self->_events_info);
+  $self->render('photos/new');
+}
+
+sub _events_info {
+  my @events_info = map { [ $_->name => $_->id ] } shift->current_user->events->all;
+  \@events_info;
+}
+
 sub create {
   my $self = shift;
+  my @uploads = $self->param('photo-data');
 
-  if ($self->is_user_authenticated) {
-  #my @uploads = grep { $_->name eq 'photo-data' } @{ $self->req->uploads };
-    my @uploads = $self->param('photo-data');
+  my $mm = File::MMagic->new;
 
-    my $mm = File::MMagic->new;
-    for my $upload (@uploads) {
-      my $data = $upload->slurp;
+  for my $upload (@uploads) {
+    my $data = $upload->slurp;
 
-      my $mime_type;
-      {
-        open my $handle, '<', \$data;
-        binmode $handle;
-        $mime_type = $mm->checktype_filehandle($handle);
-      }
-      next unless grep { $mime_type eq $_ } qw(image/png image/jpeg image/jpg image/gif);
+    my $mime_type = $self->_mime_type(\$data, $mm);
 
-      $self->model->Photo->create(
-        data         => $data,
-        content_type => $mime_type,
-        user      => $self->current_user,
-      );
-    }
+    next unless $self->_is_valid_mime_type($mime_type);
 
-    $self->redirect_to('/photos');
-  } else {
-    $self->redirect_to('/login');
+    $self->model->Photo->create(
+      data         => $data,
+      content_type => $mime_type,
+      user      => $self->current_user,
+      event_id  => $self->param('event-id'),
+    );
   }
+
+  $self->redirect_to('/photos');
+}
+
+sub _mime_type {
+  my ($self, $data_ref, $mmagic) = @_;
+
+  open my $handle, '<', $data_ref;
+  binmode $handle;
+  return $mmagic->checktype_filehandle($handle);
+}
+sub _is_valid_mime_type {
+  my ($self, $mime_type) = @_;
+
+  grep { $mime_type eq $_ } qw(image/png image/jpeg image/jpg image/gif);
 }
 
 sub index {

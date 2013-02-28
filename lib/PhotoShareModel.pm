@@ -44,12 +44,14 @@ sub config {
 
 sub db {
   my $self = shift;
-  my ($dsn, $user, $password) = @{ $self->config->{db} };
+  my ($dsn, $user, $password, $extra_args) = @{ $self->config->{db} };
+  $extra_args->{AutoCommit} = 1;
+
   PhotoShareModel::Schema->connect(
     $dsn,
     $user,
     $password,
-    { AutoCommit => 1 },
+    $extra_args,
   );
 }
 

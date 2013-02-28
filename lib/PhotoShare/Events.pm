@@ -7,8 +7,7 @@ sub index {
 
   my @events = $user->events->all;
 
-  $self->stash(events => \@events);
-  $self->render;
+  $self->render(events => \@events);
 }
 
 sub create {

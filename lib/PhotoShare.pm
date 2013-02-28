@@ -61,8 +61,6 @@ sub startup {
   $r = $r->bridge('/')
     ->to(cb => sub {
            my $self = shift;
-           $self->app->log->debug("[PATH] " . $self->req->url->path);
-           $self->app->log->debug("[AUTH] " . $self->is_user_authenticated);
            $self->redirect_to('/login') and return 0
              unless($is_open->($self) or $self->is_user_authenticated);
            return 1;
@@ -81,7 +79,7 @@ sub startup {
   $r->get('/logout')->to('sessions#destroy');
 
   # Photos
-  $r->get('/photos/new')->to('photos#new');
+  $r->get('/photos/new')->to('photos#build');
   $r->post('/photos')->to('photos#create');
   $r->get('/photos')->to('photos#index');
   $r->route('/photos/:id',

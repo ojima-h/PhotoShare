@@ -7,6 +7,9 @@
     %=file_field 'photo-data', id => 'photo-data', multiple => 'multiple'
     <br />
 
+    <label for='event-id'>イベント :</label>
+    %=select_field 'event_id' => stash('events_info');
+
     <input class='btn' type='submit' value='アップロード'/>
   % end
 </div>

@@ -15,6 +15,7 @@ use YAML::Tiny;
 use Test::DBIx::Class {
   schema_class => 'PhotoShareModel::Schema',
   connect_info => 'dbi:SQLite:dbname=./share/photosharemodel-schema-test.db',
+  connect_opts => { sqlite_uncode => 1 },
 }, qw/ User Group Event Photo /;
 
 our @EXPORT = qw(fixtures_ok change_ok User Group Event Photo);
@@ -25,15 +26,16 @@ sub new {
 
   my $self = bless {
     t    => $t,
-    csrftoken => '',
+    csrftoken    => '',
     current_user => undef,
+    stash        => undef,
   };
 
-  $t->app->hook(after_render => sub {
-                  $self->{csrftoken} = shift->csrftoken;
-                });
   $t->app->hook(after_dispatch => sub {
-                  $self->{current_user} = shift->current_user;
+                  my $_self = shift;
+                  $self->{csrftoken}    = $_self->csrftoken;
+                  $self->{current_user} = $_self->current_user;
+                  $self->{stash}        = $_self->stash;
                 });
 
   $self->add_delegate($t);
@@ -41,6 +43,7 @@ sub new {
 
 sub csrftoken    { shift->{csrftoken} }
 sub current_user { shift->{current_user} }
+sub stash        { shift->{stash} }
 
 sub prepare_user {
   shift->app->model->User->create(@_);
@@ -157,6 +160,12 @@ L<Test::PhotoShare> は、リクエストがある度、現在のユーザを取
 =head2 prepare_user
 
 =head2 login_ok
+
+=head2 upload_photos
+
+  $t->upload_photos('photo_1.png', 'photo_2.jpg');
+
+C<t/images> 以下から写真データを検索してアップロードします
 
 =head2 change_ok
 
