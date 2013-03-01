@@ -45,4 +45,19 @@ sub create {
   });
 }
 
+sub validate {
+  my ($self, $passphrase) = @_;
+
+  if ($self->passphrase eq $passphrase) {
+    $self->passphrase;
+  } else {
+    undef
+  }
+}
+sub is_valid_key {
+  my ($self, $key) = @_;
+
+  $key eq $self->passphrase;
+}
+
 1;

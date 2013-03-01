@@ -25,7 +25,7 @@ $t->logout_ok;
 # Test
 #
 $t->get_ok('/photos')
-  ->redirect_to(qr#http://localhost:\d+/login/?$#);
+  ->redirect_ok('/login');
 
 $t->login_ok('user', 'secret');
 

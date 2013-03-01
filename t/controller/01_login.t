@@ -23,14 +23,14 @@ $t->post_ok('/sessions', form => {
   name => 'bob',
   password => 'secret',
   csrftoken => $t->csrftoken,
-})->redirect_to(qr#http://localhost:\d+/$#);
+})->redirect_ok('/');
 
 $t->get_ok('/login');
 $t->post_ok('/sessions', form => {
   name => 'bob',
   password => 'wrong',
   csrftoken => $t->csrftoken,
-})->redirect_to(qr#http://localhost:\d+/login/?$#);
+})->redirect_ok('/login');
 
 # $t->delete_ok('/sessions')
 #   ->status_is(200)

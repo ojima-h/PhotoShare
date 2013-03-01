@@ -39,7 +39,7 @@ change_ok(sub { $event->photos->count }, 2,
                                             {file => $ENV{MOJO_APP_ROOT} . "/../t/images/camel.png"} ],
                           csrftoken => $t->csrftoken
                         })
-              ->redirect_to(qr#http://localhost:\d+/photos$#);
+              ->redirect_ok('/photos');
           });
 
 done_testing;

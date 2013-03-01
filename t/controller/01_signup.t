@@ -18,7 +18,7 @@ $t->post_ok('/users', form => { name => 'bob',
                                 email => 'test@example.com',
                                 csrftoken => $t->csrftoken,
                                })
-  ->redirect_to(qr#http://localhost:\d+/login/?$#);
+  ->redirect_ok('/login');
 
 $t->get_ok('/login');
 $t->post_ok('/sessions', form => {

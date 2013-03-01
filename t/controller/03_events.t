@@ -26,7 +26,7 @@ change_ok( sub { Event->count }, 1,
              $t->post_ok('/events', form => {
                'event-name' => 'Event 1',
                csrftoken => $t->csrftoken,
-             })->redirect_to(qr#http://localhost:\d+/events#);
+             })->redirect_ok('/events');
            });
 ok $t->current_user->events->find({name => 'Event 1'});
 
@@ -35,6 +35,7 @@ ok $t->current_user->events->find({name => 'Event 1'});
 #
 
 my $event = $t->current_user->events->first;
+my $event_id = $event->id;
 $t->get_ok('/events/' . $event->id);
 
 $t->post_ok('/events/' . $event->id . '/edit',
@@ -42,7 +43,7 @@ $t->post_ok('/events/' . $event->id . '/edit',
               'event-passphrase' => 'PASSPHRASE',
               csrftoken => $t->csrftoken,
             })
-  ->redirect_to(qr#http://localhost:\d+/events/\d+#);
+  ->redirect_ok("/events/$event_id");
 
 is Event->find($event->id)->passphrase, 'PASSPHRASE';
 

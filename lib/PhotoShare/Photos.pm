@@ -78,13 +78,11 @@ sub show {
 
   my $photo = $self->model->Photo($id);
 
-  if ($format eq $photo->format) {
-    my $data = $photo->slurp;
+  $self->render_text('Invalid requset!', status => 403) and return
+    unless ($format eq $photo->format);
 
-    $self->render_data($$data, format => $photo->content_type, status => 200);
-  } else {
-    $self->render_text('Invalid requset!', status => 403);
-  }
+  my $data = $photo->slurp;
+  $self->render_data($$data, format => $photo->content_type, status => 200);
 }
 
 1;

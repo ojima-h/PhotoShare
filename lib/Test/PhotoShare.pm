@@ -1,15 +1,15 @@
 package Test::PhotoShare;
 
-use base qw(Exporter Class::Delegate);
+use Exporter 'import';
 
 use Mojo::Base -strict;
 
 use Test::More;
 use Test::Mojo;
 
-use File::Spec;
+push our @ISA, 'Test::Mojo';
 
-use Test::PhotoShare::Helper;
+use File::Spec;
 
 use YAML::Tiny;
 use Test::DBIx::Class {
@@ -21,46 +21,76 @@ use Test::DBIx::Class {
 our @EXPORT = qw(fixtures_ok change_ok User Group Event Photo);
 
 sub new {
-  my $class = shift;
-  my $t = Test::Mojo->new(@_);
+  my $self = shift->SUPER::new(@_);
 
-  my $self = bless {
-    t    => $t,
-    csrftoken    => '',
-    current_user => undef,
-    stash        => undef,
-  };
+  $self->{__PHOTO_SHARE_csrftoken}    = '';
+  $self->{__PHOTO_SHARE_current_user} = undef;
+  $self->{__PHOTO_SHARE_stash}        = undef;
 
-  $t->app->hook(after_dispatch => sub {
+  $self->app->hook(after_dispatch => sub {
                   my $_self = shift;
-                  $self->{csrftoken}    = $_self->csrftoken;
-                  $self->{current_user} = $_self->current_user;
-                  $self->{stash}        = $_self->stash;
+                  $self->{__PHOTO_SHARE_csrftoken}    = $_self->csrftoken;
+                  $self->{__PHOTO_SHARE_current_user} = $_self->current_user;
+                  $self->{__PHOTO_SHARE_stash}        = $_self->stash;
                 });
 
-  $self->add_delegate($t);
+  $self;
 };
 
-sub csrftoken    { shift->{csrftoken} }
-sub current_user { shift->{current_user} }
-sub stash        { shift->{stash} }
+sub csrftoken    { shift->{__PHOTO_SHARE_csrftoken} }
+sub current_user { shift->{__PHOTO_SHARE_current_user} }
+sub stash        { shift->{__PHOTO_SHARE_stash} }
 
 sub prepare_user {
   shift->app->model->User->create(@_);
 }
 
+sub redirect_ok {
+  my ($self, $path) = @_;
+
+  local $Test::Builder::Level = $Test::Builder::Level + 1;
+
+  my $result = 1;
+
+  $result &&= ($self->tx->res->code == 302);
+
+  my $url = Mojo::URL->new(scalar $self->tx->res->headers->header('Location'));
+  $result &&= ($path eq $url->path);
+
+  $self->_test('ok', $result, "redirect to $path");
+
+  $self;
+}
+
 sub login_ok {
   my ($self, $name, $password) = @_;
 
-  $self->get_ok('/login')->status_is(200);
+  my $result = eval {
+    my ($err, $code);
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-  $self->post_ok('/sessions', form => {
-    name => $name,
-    password => $password,
-    csrftoken => $self->csrftoken,
-  });
+    # GET /login
+    $self->tx($self->ua->get('/login'));
+    ($err, $code) = $self->tx->error;
 
-  ok $self->current_user;
+    die unless !$err || $code;
+    die unless $self->tx->res->code == 200;
+
+    # POST /sessions
+    $self->tx($self->ua->post('/sessions', form => {
+      name => $name,
+      password => $password,
+      csrftoken => $self->csrftoken,
+    }));
+    ($err, $code) = $self->tx->error;
+
+    die unless !$err || $code;
+    die unless  $self->tx->res->code == 302;
+
+    $self->current_user;
+  };
+
+  $self->_test('ok', $result, 'login');
 
   $self;
 }
@@ -78,7 +108,8 @@ sub change_ok {
   $operation->();
   my $after =  $exp->();
 
-  is $after, $before + $count, "Expected changes occurred";
+  local $Test::Builder::Level = $Test::Builder::Level + 1;
+  is($after, $before + $count, "Expected changes occurred");
 }
 
 sub upload_photos {
@@ -94,19 +125,10 @@ sub upload_photos {
 }
 
 sub set_passphrase {
-  my $self = shift;
+  my ($self, $event, $passphrase) = @_;
 
-  if (@_) {
-    my ($event, $passphrase) = @_;
-
-    $self->get_ok('/events/' . $event->id)->status_is(200);
-    $self->post_ok('/events/' . $event->id . '/edit',
-                   form => {
-                     'event-passphrase' => $passphrase,
-                     csrftoken => $self->csrftoken,
-                   })
-      ->redirect_to(qr#http://localhost:\d+/events/\d+#);
-  }
+  $event->passphrase($passphrase);
+  $event->update;
 }
 
 1;
@@ -150,8 +172,7 @@ Test::PhotoShare - Test utilities for PhotoShare app.
 
 PhotoShare用のテストユーティリティを提供します。
 
-いくつかのメソッドを除き、ほとんどのメソッドの呼び出しは L<Test::Mojo>
-のインスタンスに移譲されます。
+Test::PhotoShare を継承してます。
 
 インクルードされたときに、L<Test::DBIx::Class> をインクルードし、データベースとの接続を確立します。
 各テーブルのSchemaと C<Test::DBIx::Class::fixture_ok> をエクスポートします。

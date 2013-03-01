@@ -6,12 +6,17 @@ use Test::PhotoShare;
 my $t = Test::PhotoShare->new('PhotoShare');
 
 $t->prepare_user(
-  name => 'user',
-  email => 'user@example.com',
+  name => 'user_1',
+  email => 'user_1@example.com',
+  password => 'secret',
+);
+$t->prepare_user(
+  name => 'user_2',
+  email => 'user_2@example.com',
   password => 'secret',
 );
 
-$t->login_ok('user', 'secret');
+$t->login_ok('user_1', 'secret');
 
 my $event = $t->current_user->default_group->default_event;
 
@@ -21,11 +26,14 @@ my $photo = $event->photos->first;
 
 $t->set_passphrase($event, 'PASSPHRASE');
 
-$t->logout_ok;
+$t->reset_session;
 
+#
+# Un-authenticated user
+#
 my $id = $event->id;
 $t->get_ok("/events/$id/photos")
-  ->redirect_to(qr#http://localhost:\d+/events/$id/photos/checkin/?$#);
+  ->redirect_ok('/events/$id/photos/checkin');
 $t->get_ok("/events/$id/photos/" . $photo->name)
   ->status_is(403);
 $t->get_ok("/events/$id/photos/checkin")
@@ -33,10 +41,32 @@ $t->get_ok("/events/$id/photos/checkin")
 $t->post_ok("/events/$id/photos/sessions", form => {
   passphrase => 'PASSPHRASE',
   csrftoken  => $t->csrftoken,
-})->redirect_to(qr#http://localhost:\d+/events/$id/photos?$#);
+})->redirect_ok('/events/$id/photos');
 $t->get_ok("/events/$id/photos")
   ->status_is(200)
   ->element_exists('img');
+$t->get_ok("/events/$id/photos/" . $photo->name)
+  ->status_is(200);
+
+#
+# authenticated, but not an owner
+#
+$t->login_ok('user_2', 'secret');
+
+$t->get_ok("/events/$id/photos")
+  ->redirect_ok('/events/$id/photos/checkin');
+$t->get_ok("/events/$id/photos/" . $photo->name)
+  ->status_is(403);
+
+$t->reset_session;
+
+#
+# owner
+#
+$t->login_ok('user_1', 'secret');
+
+$t->get_ok("/events/$id/photos")
+  ->status_is(200);
 $t->get_ok("/events/$id/photos/" . $photo->name)
   ->status_is(200);
 

@@ -8,17 +8,11 @@ sub index {
   my $event_id = $self->param('id');
   my $event = $self->app->model->Event($event_id);
 
-  if ($self->_is_authorized($event)) {
+  if ($self->_is_event_authenticated($event)) {
     $self->render("/events/photos/index", event => $event);
   } else {
     $self->redirect_to("/events/$event_id/photos/checkin");
   }
-}
-sub _is_authorized {
-  my ($self, $event) = @_;
-
-  $self->session('Event-Auth') and
-    $self->session('Event-Auth')->{$event->id} eq $event->passphrase
 }
 
 sub show {
@@ -27,14 +21,14 @@ sub show {
   my $event = $self->app->model->Event($event_id);
 
   $self->render_text('Invalid requset!', status => 403) and return
-    unless $self->_is_authorized($event);
+    unless $self->_is_event_authenticated($event);
 
   my $photo_id = $self->stash('photo_id');
   my $format   = $self->stash('format');
   my $photo    = $self->app->model->Photo($photo_id);
 
   $self->render_text('Invalid requset!', status => 403) and return
-    unless $self->_is_type_correspond($photo, $format);
+    unless $photo->format eq $format;
 
   my $data = $photo->slurp;
 
@@ -68,17 +62,27 @@ sub create_session {
     $self->redirect_to("/events/$event_id/photos/checkin");
   }
 }
+
+
 sub _authenticate_event {
   my ($self, $event, $passphrase) = @_;
 
   $self->session('Event-Auth' => {}) unless defined $self->session('Event-Auth');
 
-  if ($event->passphrase eq $passphrase) {
-    $self->session('Event-Auth')->{$event->id} = $passphrase;
+  if (my $key = $event->validate($passphrase)) {
+    $self->session('Event-Auth')->{$event->id} = $key;
     1;
   } else {
     0;
   }
+}
+sub _is_event_authenticated {
+  my ($self, $event) = @_;
+
+  return 0 unless $self->session('Event-Auth');
+
+  my $key = $self->session('Event-Auth')->{$event->id};
+  return $event->is_valid_key($key);
 }
 
 1;
