@@ -5,12 +5,11 @@ use Test::PhotoShare;
 
 my $t = Test::PhotoShare->new('PhotoShare');
 
-fixtures_ok {
-  User => [
-    [qw/ name password email /],
-    [qw/ bob secret test\@examle.com /],
-  ],
-};
+$t->prepare_user(
+  name     => 'bob',
+  password => 'secret',
+  email    => 'test\@examle.com',
+);
 
 $t->ua->max_redirects(0);
 

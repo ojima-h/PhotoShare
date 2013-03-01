@@ -4,6 +4,8 @@ use warnings;
 
 use base 'PhotoShareModel::Base';
 
+use Digest::SHA1 qw/sha1_base64/;
+
 =head1 NAME
 
 PhotoShareModel::User
@@ -43,11 +45,14 @@ detault_group, defalt_event も同時につくります
 sub create {
   my $self = shift;
   my %param = @_;
+  my ($name, $email, $password) = ($param{name}, $param{email}, $param{password});
+
+  my $hashed_password = sha1_base64($password);
 
   my $user = $self->db('User')->create({
-    name     => $param{name},
-    email    => $param{email},
-    password => $param{password},
+    name     => $name,
+    email    => $email,
+    password => $hashed_password,
   });
   my $default_group = $self->app->Group->create(
     name => "default: " . $param{name},
@@ -70,9 +75,11 @@ sub validate {
   my ($self, %args) = @_;
   my ($name, $password) = ($args{name}, $args{password});
 
+  my $hashed_password = sha1_base64($password);
+
   my $user = $self->db('User')->search({
         name => $name,
-        password => $password
+        password => $hashed_password
       })->first;
 
   $user ? $user->id : undef;
