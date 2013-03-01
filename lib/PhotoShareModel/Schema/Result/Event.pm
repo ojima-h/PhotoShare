@@ -17,6 +17,10 @@ __PACKAGE__->add_columns(
   group_id => {
     data_type => 'integer',
   },
+  passphrase => {
+    data_type => 'text',
+    is_nullable => 1,
+  },
 );
 
 __PACKAGE__->set_primary_key('id');

@@ -8,9 +8,9 @@
     <br />
 
     <label for='event-id'>イベント :</label>
-    %=select_field 'event_id' => stash('events_info');
+    %=select_field 'event-id' => stash('events_info');
 
-    <input class='btn' type='submit' value='アップロード'/>
+    <button class='btn' type='submit'>アップロード</button>
   % end
 </div>
 

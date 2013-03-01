@@ -6,6 +6,20 @@ use File::MMagic;
 
 use PhotoShareModel::Photo;
 
+sub index {
+  my $self = shift;
+
+  my @photos = $self->current_user->photos->search(undef, {
+    select => [qw/id content_type/]
+  });
+
+  my $events_rs = $self->current_user->events;
+
+  $self->stash(events_rs => $events_rs);
+
+  $self->render;
+}
+
 sub build {
   my $self = shift;
   my $user = $self->current_user;
@@ -54,22 +68,6 @@ sub _is_valid_mime_type {
   my ($self, $mime_type) = @_;
 
   grep { $mime_type eq $_ } qw(image/png image/jpeg image/jpg image/gif);
-}
-
-sub index {
-  my $self = shift;
-
-  my @photos = $self->current_user->photos->search(undef, {
-    select => [qw/id content_type/]
-  });
-
-  # content_type は image/*** となっているはず、と信じて
-  # 先頭の image を除く
-  my @photo_names = map {$_->id . '.' . substr($_->content_type, 6)} @photos;
-
-  $self->stash(photo_names => \@photo_names);
-
-  $self->render;
 }
 
 sub show {

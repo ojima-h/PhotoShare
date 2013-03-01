@@ -30,4 +30,20 @@ change_ok( sub { Event->count }, 1,
            });
 ok $t->current_user->events->find({name => 'Event 1'});
 
+#
+# Edit Events
+#
+
+my $event = $t->current_user->events->first;
+$t->get_ok('/events/' . $event->id);
+
+$t->post_ok('/events/' . $event->id . '/edit',
+            form => {
+              'event-passphrase' => 'PASSPHRASE',
+              csrftoken => $t->csrftoken,
+            })
+  ->redirect_to(qr#http://localhost:\d+/events/\d+#);
+
+is Event->find($event->id)->passphrase, 'PASSPHRASE';
+
 done_testing;

@@ -28,4 +28,31 @@ sub create {
   }
 }
 
+sub show {
+  my $self = shift;
+  my $id = $self->param('id');
+  my $event = $self->app->model->db->resultset('Event')->find($id);
+
+  $self->render(event => $event);
+}
+
+sub edit {
+  my $self = shift;
+  my $id = $self->param('id');
+  my $event = $self->app->model->db->resultset('Event')->find($id);
+
+  $event->name($self->param('event-name')) if $self->param('event-name');
+  $event->passphrase($self->param('event-passphrase')) if defined $self->param('event-passphrase');
+
+  if ($event->update) {
+    $self->flash('alert-success' => 'イベント ' . $event->name . ' は変更されました');
+  } else {
+    $self->flash('alert-error' => 'イベント ' . $event->name . ' を変更できませんでした');
+  }
+
+  $self->redirect_to('/events/' . $event->id);
+}
+
+
+
 1;

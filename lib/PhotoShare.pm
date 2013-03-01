@@ -92,6 +92,12 @@ sub startup {
   $r->get('/events/new')->to('events#new');
   $r->post('/events')->to('events#create');
   $r->get('/events')->to('events#index');
+  $r->route('/events/:id', id => qr/\d+/)
+    ->via('GET')
+    ->to('events#show');
+  $r->route('/events/:id/edit', id => qr/\d+/)
+    ->via('POST')
+    ->to('events#edit');
 }
 
 1;

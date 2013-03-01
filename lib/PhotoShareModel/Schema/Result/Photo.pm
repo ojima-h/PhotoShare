@@ -25,4 +25,15 @@ __PACKAGE__->belongs_to(
   event => 'PhotoShareModel::Schema::Result::Event', 'event_id'
 );
 
+#
+# Custom Methods
+#
+sub filename {
+  my $self = shift;
+
+  # content_type は image/*** となっているはず、と信じて
+  # 先頭の image を除く
+  $self->id . '.'  . substr($self->content_type, 6);
+}
+
 1;

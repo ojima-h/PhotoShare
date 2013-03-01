@@ -2,7 +2,31 @@
    "sets" : [
       {
          "quantity" : "all",
+         "class" : "Event"
+      },
+      {
+         "quantity" : "all",
          "class" : "User"
+      },
+      {
+         "quantity" : "all",
+         "class" : "UserEvent"
+      },
+      {
+         "quantity" : "all",
+         "class" : "Photo"
+      },
+      {
+         "quantity" : "all",
+         "class" : "Group"
+      },
+      {
+         "quantity" : "all",
+         "class" : "UserPhoto"
+      },
+      {
+         "quantity" : "all",
+         "class" : "UserGroup"
       }
    ],
    "might_have" : {

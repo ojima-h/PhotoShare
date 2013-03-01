@@ -2,13 +2,18 @@
 % title '写真';
 
 <div class='photos'>
+  % for my $event (stash('events_rs')->all) {
+  <h4><%= $event->name %></h4>
+
   <ul class='thumbnails'>
-    % for my $photo_name (@{ stash('photo_names') }) {
+    % for my $photo ($event->photos->all) {
     <li class='span2'>
       <div class='thumbnail'>
-        %=image "/photos/$photo_name", alt => $photo_name
+        %=image "/photos/" . $photo->filename, alt => $photo->filename
       </div>
     </li>
     % }
   </ul>
+
+  % }
 </div>

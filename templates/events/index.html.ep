@@ -2,12 +2,11 @@
 % title 'イベント';
 
 <div>
-  <ul>
-    % for my $event (@{ $self->stash('events') }) {
-    <li>
-      %= $event->name
-    </li>
-    % }
+  % for my $event (@{ $self->stash('events') }) {
+    <h3>
+    %= link_to $event->name => '/events/' . $event->id
+    </h3>
+  % }
   </ul>
 </div>
 

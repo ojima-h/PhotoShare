@@ -5,11 +5,19 @@
           </li>
 
           % if (is_user_authenticated) {
-            <li>
-              %= link_to Upload => url_for('/photos/new')
-            </li>
-            <li>
-              %= link_to Photos => url_for('/photos')
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                Photo
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li>
+                  %= link_to Photos => url_for('/photos')
+                </li>
+                <li>
+                  %= link_to 写真を追加する => url_for('/photos/new')
+                </li>
+              </ul>
             </li>
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#">

@@ -1,0 +1,18 @@
+% layout 'default';
+% title 'イベント:' . $event->name;
+
+<div>
+  %=form_for '/events/' . $event->id . '/edit', (method => 'POST'), id => 'events_edit_name_form', class => 'form-inline' => begin
+    <label for='event-name'>イベント名 :</label>
+    %=text_field 'event-name', id => 'event-name', value => $event->name
+    <button class='btn' type='submit'>変更</button>
+  % end
+
+  %=form_for '/events/' . $event->id . '/edit', (method => 'POST'), id => 'events_edit_passphrase_form', class => 'form-inline' => begin
+    <label for='event-passphrase'>あいことば :</label>
+    %=text_field 'event-passphrase', id => 'event-passphrase', value => $event->passphrase
+    <button class='btn' type='submit'>変更</button>
+  % end
+</div>
+
+
