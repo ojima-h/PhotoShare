@@ -50,25 +50,14 @@ $photo_id -- photo id in the database. (optional)
 
 =cut
 
-sub new {
-  my ($class, $app, $id) = @_;
-
-  my $self = $class->SUPER::new($app);
-
-  if (defined $id) {
-    $self->{result} = $self->db('Photo')->find($id)
-      or croak 'Photo not found';
-  }
-
-  return $self;
-}
+sub _table_name { 'Photo' }
 
 # Delegating Methods
-sub id           { shift->_result->id }
-sub content_type { shift->_result->content_type }
-sub event        { shift->_result->event }
-sub name         { shift->_result->name }
-sub format       { shift->_result->format }
+sub id           { shift->_result->id(@_) }
+sub content_type { shift->_result->content_type(@_) }
+sub event        { shift->_result->event(@_) }
+sub name         { shift->_result->name(@_) }
+sub format       { shift->_result->format(@_) }
 
 sub create {
   my $self = shift;
@@ -121,7 +110,5 @@ sub slurp {
 
   return \$data;
 }
-
-sub _result { shift->{result} }
 
 1;

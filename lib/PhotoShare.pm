@@ -11,7 +11,6 @@ sub startup {
   # Initialize PhotoShareModel
   my $model = PhotoShareModel->new($self->mode);
   $self->helper(model => sub { $model });
-  $self->helper(db => sub { $model->db });
   $self->config( $model->config );
 
   # Documentation browser under "/perldoc"
@@ -26,20 +25,15 @@ sub startup {
     'session_key' => $self->config->{session_key},
     'load_user' => sub {
       my ($app, $uid) = @_;
-      return $app->db->resultset('User')->find($uid);
+      return $app->model->User($uid);
     },
     'validate_user' => sub {
       my ($app, $name, $password, $extradata) = @_;
 
-      my $user = $app->db->resultset('User')->search({
-        name => $name,
-        password => $password})->first;
-
-      if ($user) {
-        return $user->id;
-      } else {
-        return undef
-      }
+      $app->model->User->validate(
+        name     => $name,
+        password => $password
+      );
     },
   });
 

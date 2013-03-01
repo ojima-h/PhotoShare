@@ -6,7 +6,7 @@ use PhotoShareModel::Photo;
 sub index {
   my $self = shift;
   my $event_id = $self->param('id');
-  my $event = $self->app->model->db->resultset('Event')->find($event_id);
+  my $event = $self->app->model->Event($event_id);
 
   if ($self->_is_authorized($event)) {
     $self->render("/events/photos/index", event => $event);
@@ -24,7 +24,7 @@ sub _is_authorized {
 sub show {
   my $self = shift;
   my $event_id = $self->stash('id');
-  my $event = $self->app->model->db->resultset('Event')->find($event_id);
+  my $event = $self->app->model->Event($event_id);
 
   $self->render_text('Invalid requset!', status => 403) and return
     unless $self->_is_authorized($event);
@@ -48,7 +48,7 @@ sub _is_type_correspond {
 sub checkin {
   my $self = shift;
   my $event_id = $self->param('id');
-  my $event = $self->app->model->db->resultset('Event')->find($event_id);
+  my $event = $self->app->model->Event($event_id);
 
   $self->render('/events/photos/checkin', event => $event);
 }
@@ -56,7 +56,7 @@ sub checkin {
 sub create_session {
   my $self = shift;
   my $event_id = $self->param('id');
-  my $event = $self->app->model->db->resultset('Event')->find($event_id);
+  my $event = $self->app->model->Event($event_id);
 
   my $passphrase = $self->param('passphrase');
 

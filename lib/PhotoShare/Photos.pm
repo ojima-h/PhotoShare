@@ -81,7 +81,7 @@ sub show {
   if ($format eq $photo->format) {
     my $data = $photo->slurp;
 
-    $self->render_data(\$data, format => $photo->content_type, status => 200);
+    $self->render_data($$data, format => $photo->content_type, status => 200);
   } else {
     $self->render_text('Invalid requset!', status => 403);
   }
