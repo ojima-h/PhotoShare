@@ -46,25 +46,17 @@ sub startup {
   # Router
   my $r = $self->routes;
 
-  my @open_paths = (
-    [qw(GET /)],
-    [qw(GET /login)],
-    [qw(POST /sessions)],
-    [qw(GET  /signup)],
-    [qw(POST /users)],
-  );
-  my $is_open = sub {
-    my $c = shift;
-    grep { $c->req->method eq $_->[0] and $c->req->url->path eq $_->[1] } @open_paths;
-  };
+  {
+    my $app = $self;
 
-  $r = $r->bridge('/')
-    ->to(cb => sub {
-           my $self = shift;
-           $self->redirect_to('/login') and return 0
-             unless($is_open->($self) or $self->is_user_authenticated);
-           return 1;
-         });
+    $r = $r->bridge('/')
+      ->to(cb => sub {
+             my $self = shift;
+             $self->redirect_to('/login') and return 0
+               if ($app->_is_restricted($self->req) and not $self->is_user_authenticated);
+             return 1;
+           });
+  }
 
   # Normal route to controller
   $r->get('/')->to('example#welcome');
@@ -98,6 +90,40 @@ sub startup {
   $r->route('/events/:id/edit', id => qr/\d+/)
     ->via('POST')
     ->to('events#edit');
+
+  # Events/Photos
+  $r->route('/events/:id/photos', id => qr/\d+/)
+    ->via('GET')
+    ->to('events-photos#index');
+  $r->route('/events/:id/photos/checkin', id => qr/\d+/)
+    ->via('GET')
+    ->to('events-photos#checkin');
+  $r->route('/events/:id/photos/sessions', id => qr/\d+/)
+    ->via('POST')
+    ->to('events-photos#create_session');
+  $r->route('/events/:id/photos/:photo_id',
+            id => qr/\d+/,
+            photo_id => qr/\d+/,
+            format => [qw/png jpeg jpg gif/])
+    ->via('GET')
+    ->to('events-photos#show');
+}
+
+sub _is_restricted {
+  my $self = shift;
+  my $req = shift;
+
+  my @open_paths = (
+    ['GET'  => qr#\A/\Z#],
+    ['GET'  => qr#\A/login\Z#],
+    ['POST' => qr#\A/sessions\Z#],
+    ['GET'  => qr#\A/signup\Z#],
+    ['POST' => qr#\A/users\Z#],
+    ['GET'  => qr#\A/events/\d+/photos#],
+    ['POST' => qr#\A/events/\d+/photos#],
+  );
+
+  not ( grep { $req->method eq $_->[0] and $req->url->path =~ $_->[1] } @open_paths );
 }
 
 1;

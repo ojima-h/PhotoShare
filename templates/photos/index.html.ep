@@ -9,7 +9,7 @@
     % for my $photo ($event->photos->all) {
     <li class='span2'>
       <div class='thumbnail'>
-        %=image "/photos/" . $photo->filename, alt => $photo->filename
+        %=image "/photos/" . $photo->name, alt => $photo->name
       </div>
     </li>
     % }

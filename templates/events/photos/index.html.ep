@@ -1,0 +1,19 @@
+% layout 'default';
+% title '写真';
+
+% my $event = stash('event');
+% my $event_id = $event->id;
+
+<div class='events-photos'>
+  <h2><%= $event->name %></h2>
+  <ul class='thumbnails'>
+    % for my $photo ($event->photos->all) {
+    <li class='span2'>
+      <div class='thumbnail'>
+        % my $photo_name = $photo->name;
+        %=image "/events/$event_id/photos/$photo_name", alt => $photo_name
+      </div>
+    </li>
+    % }
+  </ul>
+</div>

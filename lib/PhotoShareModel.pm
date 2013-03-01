@@ -58,6 +58,6 @@ sub db {
 sub User { PhotoShareModel::User->new(shift) }
 sub Group { PhotoShareModel::Group->new(shift) }
 sub Event { PhotoShareModel::Event->new(shift) }
-sub Photo { PhotoShareModel::Photo->new(shift) }
+sub Photo { my $self = shift; PhotoShareModel::Photo->new($self, @_) }
 
 1;

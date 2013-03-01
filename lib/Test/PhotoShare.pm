@@ -93,6 +93,22 @@ sub upload_photos {
   $self;
 }
 
+sub set_passphrase {
+  my $self = shift;
+
+  if (@_) {
+    my ($event, $passphrase) = @_;
+
+    $self->get_ok('/events/' . $event->id)->status_is(200);
+    $self->post_ok('/events/' . $event->id . '/edit',
+                   form => {
+                     'event-passphrase' => $passphrase,
+                     csrftoken => $self->csrftoken,
+                   })
+      ->redirect_to(qr#http://localhost:\d+/events/\d+#);
+  }
+}
+
 1;
 
 __END__

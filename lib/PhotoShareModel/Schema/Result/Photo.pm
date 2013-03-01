@@ -28,12 +28,22 @@ __PACKAGE__->belongs_to(
 #
 # Custom Methods
 #
-sub filename {
+sub name {
   my $self = shift;
 
+  $self->id . '.'  . $self->format;
+}
+sub format {
   # content_type は image/*** となっているはず、と信じて
   # 先頭の image を除く
-  $self->id . '.'  . substr($self->content_type, 6);
+  substr(shift->content_type, 6);
 }
 
 1;
+
+
+
+
+
+
+

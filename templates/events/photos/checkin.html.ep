@@ -1,0 +1,16 @@
+% layout 'default';
+% title 'あいことば';
+
+% my $event = stash('event');
+% my $event_id = $event->id;
+
+<div class='events-photos-checkin'>
+
+  %= form_for "/events/$event_id/photos/sessions" => (method => 'POST'), id => 'events-photos-chekin-form' => begin
+    <label for='passphrase'> あいことばを入力してください:</label>
+    %= text_field 'passphrase'
+
+    <button type='submit' class='btn'>OK</button>
+  % end
+
+</div>

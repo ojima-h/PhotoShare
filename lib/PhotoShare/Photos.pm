@@ -40,17 +40,18 @@ sub create {
   my $mm = File::MMagic->new;
 
   for my $upload (@uploads) {
-    my $data = $upload->slurp;
-
+    my $data      = $upload->slurp;
     my $mime_type = $self->_mime_type(\$data, $mm);
+    my $event_id  = $self->param('event-id');
+    my $user      = $self->current_user;
 
     next unless $self->_is_valid_mime_type($mime_type);
 
     $self->model->Photo->create(
       data         => $data,
       content_type => $mime_type,
-      user      => $self->current_user,
-      event_id  => $self->param('event-id'),
+      event_id     => $event_id,
+      user         => $user,
     );
   }
 
@@ -72,20 +73,15 @@ sub _is_valid_mime_type {
 
 sub show {
   my $self = shift;
-  my $photo_id = $self->stash('id');
+  my $id = $self->stash('id');
   my $format   = $self->stash('format');
 
-  my $photo = $self->model->db->resultset('Photo')->find($photo_id);
+  my $photo = $self->model->Photo($id);
 
-  if ('image/' . $format eq $photo->content_type) {
-    my $photos_dir = $self->model->config('photo_dir');
-    my $photo_path = File::Spec->catfile($photos_dir, $photo_id . '.' . $format);
+  if ($format eq $photo->format) {
+    my $data = $photo->slurp;
 
-    my $fh = IO::File->new($photo_path, 'r');
-    $fh->binmode;
-    $fh->read(my $data, -s $photo_path);
-
-    $self->render_data($data, format => $photo->content_type, status => 200);
+    $self->render_data(\$data, format => $photo->content_type, status => 200);
   } else {
     $self->render_text('Invalid requset!', status => 403);
   }
