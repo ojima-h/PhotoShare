@@ -48,18 +48,18 @@ sub prepare_user {
 sub redirect_ok {
   my ($self, $path) = @_;
 
+  my $code = $self->tx->res->code;
+  my $url  = $self->tx->res->headers->header('Location');
+
+  my $path_got = $url ? Mojo::URL->new($url)->path : '';
+
   local $Test::Builder::Level = $Test::Builder::Level + 1;
+  $self->_test('is', "302: $path",
+                     "$code: $path_got",
+               "redirect to $path",
+             );
 
-  my $result = 1;
-
-  $result &&= ($self->tx->res->code == 302);
-
-  my $url = Mojo::URL->new(scalar $self->tx->res->headers->header('Location'));
-  $result &&= ($path eq $url->path);
-
-  $self->_test('ok', $result, "redirect to $path");
-
-  $self;
+  return $self;
 }
 
 sub login_ok {
