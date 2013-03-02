@@ -17,7 +17,7 @@ sub startup {
   $self->plugin('PODRenderer');
 
   # Protection from CSRF attack.
-  $self->plugin('CSRFProtect');
+  $self->plugin('PhotoShare::Plugin::CSRFProtect');
 
   # User Authentication
   $self->plugin('authentication' => {
