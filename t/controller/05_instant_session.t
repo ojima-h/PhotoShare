@@ -35,7 +35,7 @@ my $id = $event->id;
 $t->get_ok("/events/$id/photos")
   ->redirect_ok("/events/$id/photos/checkin");
 $t->get_ok("/events/$id/photos/" . $photo->name)
-  ->status_is(403);
+  ->redirect_ok("/events/$id/photos/checkin");
 $t->get_ok("/events/$id/photos/checkin")
   ->status_is(200);
 $t->post_ok("/events/$id/photos/sessions", form => {
@@ -58,7 +58,7 @@ $t->login_ok('user_2', 'secret');
 $t->get_ok("/events/$id/photos")
   ->redirect_ok("/events/$id/photos/checkin");
 $t->get_ok("/events/$id/photos/" . $photo->name)
-  ->status_is(403);
+  ->redirect_ok("/events/$id/photos/checkin");
 
 $t->reset_session;
 

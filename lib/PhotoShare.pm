@@ -37,22 +37,13 @@ sub startup {
     },
   });
 
+  # Event Authentication
+  $self->plugin('PhotoShare::Plugin::EventAuthentication');
+
   # Router
   my $r = $self->routes;
 
-  {
-    my $app = $self;
-
-    $r = $r->bridge('/')
-      ->to(cb => sub {
-             my $self = shift;
-             $self->redirect_to('/login') and return 0
-               if ($app->_is_restricted($self->req) and not $self->is_user_authenticated);
-             return 1;
-           });
-  }
-
-  # Normal route to controller
+  # Root
   $r->get('/')->to('example#welcome');
 
   # Sign Up
@@ -64,60 +55,73 @@ sub startup {
   $r->post('/sessions')->to('sessions#create');
   $r->get('/logout')->to('sessions#destroy');
 
-  # Photos
-  $r->get('/photos/new')->to('photos#build');
-  $r->post('/photos')->to('photos#create');
-  $r->get('/photos')->to('photos#index');
-  $r->route('/photos/:id',
-             id => qr/\d+/,
-             format => [qw(png jpeg jpg gif)])
-    ->via('GET')
-    ->to('photos#show');
 
-  # Events
-  $r->get('/events/new')->to('events#new');
-  $r->post('/events')->to('events#create');
-  $r->get('/events')->to('events#index');
-  $r->route('/events/:id', id => qr/\d+/)
-    ->via('GET')
-    ->to('events#show');
-  $r->route('/events/:id/edit', id => qr/\d+/)
-    ->via('POST')
-    ->to('events#edit');
+  ## restricted routes
+  {
+    my $app = $self;
+    my $r_restricted = $r->bridge('/')
+      ->to(cb => sub {
+             my $self = shift;
+
+             $self->redirect_to('/login') and return 0
+               unless $self->is_user_authenticated;
+
+             return 1;
+           });
+
+    # Photos
+    $r_restricted->get ('/photos/new')->to('photos#build');
+    $r_restricted->post('/photos')    ->to('photos#create');
+    $r_restricted->get ('/photos')    ->to('photos#index');
+    $r_restricted->route('/photos/:id',
+                         id => qr/\d+/,
+                         format => [qw(png jpeg jpg gif)])
+                 ->via('GET')
+                 ->to('photos#show');
+
+    # Events
+    $r_restricted->get('/events/new')->to('events#new');
+    $r_restricted->post('/events')->to('events#create');
+    $r_restricted->get('/events')->to('events#index');
+    $r_restricted->route('/events/:id', id => qr/\d+/)
+                 ->via('GET')
+                 ->to('events#show');
+    $r_restricted->route('/events/:id/edit', id => qr/\d+/)
+                 ->via('POST')
+                 ->to('events#edit');
+
+  }
 
   # Events/Photos
-  $r->route('/events/:id/photos', id => qr/\d+/)
-    ->via('GET')
-    ->to('events-photos#index');
-  $r->route('/events/:id/photos/checkin', id => qr/\d+/)
-    ->via('GET')
-    ->to('events-photos#checkin');
-  $r->route('/events/:id/photos/sessions', id => qr/\d+/)
-    ->via('POST')
-    ->to('events-photos#create_session');
-  $r->route('/events/:id/photos/:photo_id',
-            id => qr/\d+/,
-            photo_id => qr/\d+/,
-            format => [qw/png jpeg jpg gif/])
-    ->via('GET')
-    ->to('events-photos#show');
-}
+  {
+    my $r_event = $r->route('/events/:id/photos', id => qr/\d+/);
 
-sub _is_restricted {
-  my $self = shift;
-  my $req = shift;
+    $r_event->get ('/checkin') ->to('events-photos#checkin');
+    $r_event->post('/sessions')->to('events-photos#create_session');
 
-  my @open_paths = (
-    ['GET'  => qr#\A/\Z#],
-    ['GET'  => qr#\A/login\Z#],
-    ['POST' => qr#\A/sessions\Z#],
-    ['GET'  => qr#\A/signup\Z#],
-    ['POST' => qr#\A/users\Z#],
-    ['GET'  => qr#\A/events/\d+/photos#],
-    ['POST' => qr#\A/events/\d+/photos#],
-  );
+    ## restricted routes
+    {
+      #my $r_event_restricted = $r_event;
+      my $r_event_restricted = $r_event->bridge('')->to(
+        cb => sub {
+          my $self  = shift;
+          my $id    = $self->stash('id');
+          my $event = $self->model->Event($id);
 
-  not ( grep { $req->method eq $_->[0] and $req->url->path =~ $_->[1] } @open_paths );
+          $self->redirect_to("/events/$id/photos/checkin") and return
+            unless $self->is_event_authorized($event);
+
+          $self->stash(event => $event);
+          return 1;
+        }
+      );
+
+      $r_event_restricted->get('')->to('events-photos#index');
+      $r_event_restricted->route('/:photo_id', photo_id => qr/\d+/, format => [qw/png jpeg jpg gif/])
+                         ->via('GET')
+                         ->to('events-photos#show');
+    }
+  }
 }
 
 1;
