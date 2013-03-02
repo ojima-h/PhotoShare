@@ -85,4 +85,11 @@ sub validate {
   $user ? $user->id : undef;
 }
 
+sub is_owner {
+  my ($self, $event) = @_;
+
+  $self->events->find($event->id);
+}
+
+
 1;

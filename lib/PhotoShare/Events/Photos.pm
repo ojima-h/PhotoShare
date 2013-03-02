@@ -8,7 +8,7 @@ sub index {
   my $event_id = $self->param('id');
   my $event = $self->app->model->Event($event_id);
 
-  if ($self->_is_event_authenticated($event)) {
+  if ($self->_is_authorized($event)) {
     $self->render("/events/photos/index", event => $event);
   } else {
     $self->redirect_to("/events/$event_id/photos/checkin");
@@ -21,7 +21,7 @@ sub show {
   my $event = $self->app->model->Event($event_id);
 
   $self->render_text('Invalid requset!', status => 403) and return
-    unless $self->_is_event_authenticated($event);
+    unless $self->_is_authorized($event);
 
   my $photo_id = $self->stash('photo_id');
   my $format   = $self->stash('format');
@@ -63,6 +63,13 @@ sub create_session {
   }
 }
 
+sub _is_authorized {
+  my ($self, $event) = @_;
+
+  $self->_is_event_authenticated($event)
+    or ($self->is_user_authenticated
+          and $self->current_user->is_owner($event));
+}
 
 sub _authenticate_event {
   my ($self, $event, $passphrase) = @_;

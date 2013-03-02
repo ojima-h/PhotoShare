@@ -54,8 +54,8 @@ sub redirect_ok {
   my $path_got = $url ? Mojo::URL->new($url)->path : '';
 
   local $Test::Builder::Level = $Test::Builder::Level + 1;
-  $self->_test('is', "302: $path",
-                     "$code: $path_got",
+  $self->_test('is', "$code: $path_got",
+                     "302: $path",
                "redirect to $path",
              );
 
@@ -97,6 +97,7 @@ sub login_ok {
 
 sub logout_ok {
   my $self = shift;
+  local $Test::Builder::Level = $Test::Builder::Level + 1;
   $self->get_ok('/logout');
   $self;
 }

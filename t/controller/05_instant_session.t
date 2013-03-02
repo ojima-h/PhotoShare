@@ -33,7 +33,7 @@ $t->reset_session;
 #
 my $id = $event->id;
 $t->get_ok("/events/$id/photos")
-  ->redirect_ok('/events/$id/photos/checkin');
+  ->redirect_ok("/events/$id/photos/checkin");
 $t->get_ok("/events/$id/photos/" . $photo->name)
   ->status_is(403);
 $t->get_ok("/events/$id/photos/checkin")
@@ -41,12 +41,14 @@ $t->get_ok("/events/$id/photos/checkin")
 $t->post_ok("/events/$id/photos/sessions", form => {
   passphrase => 'PASSPHRASE',
   csrftoken  => $t->csrftoken,
-})->redirect_ok('/events/$id/photos');
+})->redirect_ok("/events/$id/photos");
 $t->get_ok("/events/$id/photos")
   ->status_is(200)
   ->element_exists('img');
 $t->get_ok("/events/$id/photos/" . $photo->name)
   ->status_is(200);
+
+$t->reset_session;
 
 #
 # authenticated, but not an owner
@@ -54,7 +56,7 @@ $t->get_ok("/events/$id/photos/" . $photo->name)
 $t->login_ok('user_2', 'secret');
 
 $t->get_ok("/events/$id/photos")
-  ->redirect_ok('/events/$id/photos/checkin');
+  ->redirect_ok("/events/$id/photos/checkin");
 $t->get_ok("/events/$id/photos/" . $photo->name)
   ->status_is(403);
 
