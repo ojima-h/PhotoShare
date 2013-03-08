@@ -38,8 +38,12 @@ How to Install
     email_sender に user と password を適当なSMTPサーバの
     ユーザ名とパスワードに書き換える。
     
+6.  データベースのスキーマを読み込みます
+
+        $ ./script/migrate install
+    
 6.  テストを走らせます。
 
-        $ ./script/photo_share Test
+        $ ./script/photo_share test
         
     テストが通れば、ひとまずオッケーです。
