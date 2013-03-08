@@ -111,4 +111,6 @@ config.yml
 
 ## Image files
 share/photos/development/*
+!share/photos/development/.gitkeep
 share/photos/test/*
+!share/photos/test/.gitkeep
