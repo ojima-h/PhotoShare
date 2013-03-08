@@ -32,6 +32,7 @@ How to Install
     -   Authen::SASL
     -   MIME::Base64
     -   IO::Scalar
+    -   Digest::SHA1
 
 5.  Copy /config.yml.example to /config.yml.
 

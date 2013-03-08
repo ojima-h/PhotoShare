@@ -4,7 +4,10 @@ use warnings;
 
 use base 'PhotoShareModel::Base';
 
+use Mojo::Util qw(md5_sum);
 use Digest::SHA1 qw/sha1_base64/;
+
+our $STRETCH_COUNT = 100;
 
 =head1 NAME
 
@@ -47,7 +50,7 @@ sub create {
   my %param = @_;
   my ($name, $email, $password) = ($param{name}, $param{email}, $param{password});
 
-  my $hashed_password = sha1_base64($password);
+  my $hashed_password = $self->_get_password_hash($name, $password);
 
   my $user = $self->db('User')->create({
     name     => $name,
@@ -75,7 +78,7 @@ sub validate {
   my ($self, %args) = @_;
   my ($name, $password) = ($args{name}, $args{password});
 
-  my $hashed_password = sha1_base64($password);
+  my $hashed_password = $self->_get_password_hash($name, $password);
 
   my $user = $self->db('User')->search({
         name => $name,
@@ -91,5 +94,23 @@ sub is_owner {
   $self->events->find($event->id);
 }
 
+sub _get_password_hash {
+  my ($self, $id, $password) = @_;
+  my $salt = $self->_salt($id);
+
+  my $hash = '';
+  for (0..$STRETCH_COUNT) {
+    $hash = sha1_base64($hash . $password . $salt);
+  }
+
+  $hash
+}
+
+sub _salt {
+  my ($self, $id) = @_;
+  my $salt = md5_sum $self->app->config('session_key');
+
+  $id . $salt;
+}
 
 1;
