@@ -23,8 +23,6 @@ How to Install
     -   Mojolicious
     -   DBIx::Class
     -   DBIx::Class::Schema::Loader
-    -   DBIx::CLass::Migration
-    -   Mojolicious::Plugin::TagHelpers
     -   Mojolicious::Plugin::Authentication
     -   Mojolicious::Plugin::CSRFProtect
     -   YAML::Tiny
@@ -34,3 +32,14 @@ How to Install
     -   Authen::SASL
     -   MIME::Base64
     -   IO::Scalar
+
+5.  Copy /config.yml.example to /config.yml.
+
+    email_sender に user と password を適当なSMTPサーバの
+    ユーザ名とパスワードに書き換える。
+    
+6.  テストを走らせます。
+
+        $ ./script/photo_share Test
+        
+    テストが通れば、ひとまずオッケーです。
