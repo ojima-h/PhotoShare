@@ -1,4 +1,21 @@
-db:
-  dsn: 'dbi:SQLite:$FindBin::Bin/../db/development.sqlite3'
+default:
+  session_key: wickedapp
+  email_sender:
+    user:     username
+    password: password
 
-session_key: wickedapp
+development:
+  db:
+    - 'dbi:SQLite:dbname=./share/photosharemodel-schema.db'
+    - ''
+    - ''
+    -
+      sqlite_unicode: 1
+  photo_dir: '../share/photos/'
+  
+   
+
+test:
+  db:
+    - 'dbi:SQLite:dbname=./share/photosharemodel-schema-test.db'
+  photo_dir: '../share/photos-test/'

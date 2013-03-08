@@ -2,7 +2,7 @@
 % title 'Signup';
 
 <div>
-  %=form_for '/users' => (method => 'post'), id => 'signup_form' => begin
+  %=form_for '/signup' => (method => 'post'), id => 'signup_form' => begin
     <label for='name'>ユーザID :</label>
     %=text_field 'name', id => 'name'
     <br />

@@ -46,17 +46,31 @@ sub startup {
   # Root
   $r->get('/')->to('example#welcome');
 
-  # Sign Up
-  $r->get('/signup')->to('signup#form');
-  $r->post('/users')->to('users#create');
+  ## un-authenticated users only
+  {
+    my $app = $self;
+    my $r_unauthorized = $r->bridge('/')
+      ->to(cb => sub {
+             my $self = shift;
 
-  # Login / Logout
-  $r->get('/login')->to('login#form');
-  $r->post('/sessions')->to('sessions#create');
-  $r->get('/logout')->to('sessions#destroy');
+             $self->redirect_to('/') and return 0
+               if $self->is_user_authenticated;
 
+             return 1;
+           });
 
-  ## restricted routes
+    # Sign Up
+    $r_unauthorized->get ('/signup')->to('signup#form');
+    $r_unauthorized->post('/signup')->to('signup#confirm');
+    $r_unauthorized->get ('/signup/confirm-email')->to('signup#confirm_email');
+    $r_unauthorized->get ('/users/create')->to('users#create');
+
+    # Login
+    $r_unauthorized->get('/login')->to('login#form');
+    $r_unauthorized->post('/sessions')->to('sessions#create');
+  }
+
+  ## authenticated users only
   {
     my $app = $self;
     my $r_restricted = $r->bridge('/')
@@ -68,6 +82,9 @@ sub startup {
 
              return 1;
            });
+
+    # Logout
+    $r->get('/logout')->to('sessions#destroy');
 
     # Photos
     $r_restricted->get ('/photos/new')->to('photos#build');

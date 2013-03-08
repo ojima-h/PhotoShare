@@ -25,6 +25,8 @@ $t->post_ok('/sessions', form => {
   csrftoken => $t->csrftoken,
 })->redirect_ok('/');
 
+$t->reset_session;
+
 $t->get_ok('/login');
 $t->post_ok('/sessions', form => {
   name => 'bob',

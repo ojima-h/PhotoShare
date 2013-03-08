@@ -30,5 +30,7 @@ How to Install
     -   YAML::Tiny
     -   Test::DBIx::Class   <- めっちゃでかい
     -   File::MMagic
-    
-    
+    -   Email::Sender::Transport::SMTP
+    -   Authen::SASL
+    -   MIME::Base64
+    -   IO::Scalar
