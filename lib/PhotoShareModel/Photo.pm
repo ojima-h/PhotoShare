@@ -77,7 +77,7 @@ sub create {
 
   my $filename = File::Spec->catfile($self->app->config->{photo_dir},
                                      $photo->id . '.' . $ext);
-
+ 
   my $file = IO::File->new($filename, '>')
     or croak("Failed to open file $filename: $!");
   $file->binmode;

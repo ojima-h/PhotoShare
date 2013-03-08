@@ -10,13 +10,14 @@ use Email::Sender::Transport::SMTP;
 sub confirm {
   my $self = shift;
 
-  my ($name, $email, $password, $password_confirm) = $self->param([qw/ name email password password-confirm/]);
+  my %message = $self->_validate_account_info;
 
-  unless ($password eq $password_confirm) {
-    $self->flash('alert-error' => 'パスワードが一致しません');
+  if (defined $message{error}) {
+    $self->flash('alert-error' => $message{error});
     return $self->redirect_to('/signup');
   }
 
+  my ($name, $email, $password, $password_confirm) = $self->param([qw/ name email password password-confirm /]);
   my $token = _generate_token();
 
   $self->session(signup_info => {
@@ -84,6 +85,19 @@ sub _is_user_info_registered {
   my $self = shift;
 
   $self->session('signup_info');
+}
+
+sub _validate_account_info {
+  my $self = shift;
+  my ($name, $email, $password, $password_confirm) = $self->param([qw/ name email password password-confirm/]);
+
+  return (error => 'パスワードが一致しません') unless ($password eq $password_confirm);
+
+  return (error => "ユーザ名 $name は既に使用されています") if ($self->model->User->exists(name => $name));
+
+  return (error => "メールアドレス $email は既に使用されています") if ($self->model->User->exists(email => $email));
+
+  return qw(ok);
 }
 
 1;

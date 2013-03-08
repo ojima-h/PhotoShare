@@ -94,6 +94,32 @@ sub is_owner {
   $self->events->find($event->id);
 }
 
+=head2 exists
+
+指定された name や email を持つユーザが存在すれば、真値を返します。
+
+  $user->exists(name => 'foo');
+  $user->exists(email => 'bar');
+
+=cut
+
+sub exists {
+  my ($self, %args) = @_;
+
+  if (my $name = $args{name}) {
+    return $self->db('User')->find({
+      name => $name,
+    });
+  }
+  if (my $email = $args{email}) {
+    return $self->db('User')->find({
+      email => $email,
+    });
+  }
+
+  0;
+}
+
 sub _get_password_hash {
   my ($self, $id, $password) = @_;
   my $salt = $self->_salt($id);

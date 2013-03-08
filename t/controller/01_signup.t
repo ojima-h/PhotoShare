@@ -7,6 +7,9 @@ use Email::Sender::Simple;
 
 my $t = Test::PhotoShare->new('PhotoShare');
 
+#
+# Signup
+#
 $t->get_ok('/signup')
   ->status_is(200)
   ->element_exists('form#signup_form[action=/signup]')
@@ -45,12 +48,32 @@ is $t->current_user->name, 'bob', 'user created and logged in';
 
 $t->reset_session;
 
+#
+# Login
+#
 $t->get_ok('/login');
 $t->post_ok('/sessions', form => {
   name      => 'bob',
   password  => 'pass',
   csrftoken => $t->csrftoken,
 });
+
+$t->reset_session;
+
+#
+# Uniqueness of users
+#
+$t->get_ok('/signup')
+  ->status_is(200);
+
+$t->post_ok('/signup', form => { name => 'bob',
+                                 password => 'pass',
+                                 'password-confirm' => 'pass',
+                                 email => 'test-2@example.com',
+                                 csrftoken => $t->csrftoken,
+                               })
+  ->redirect_ok('/signup');
+
 
 done_testing;
 
