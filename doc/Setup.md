@@ -22,9 +22,7 @@ How to Install
 
     -   Mojolicious
     -   DBIx::Class
-    -   DBIx::Class::Schema::Loader
     -   Mojolicious::Plugin::Authentication
-    -   Mojolicious::Plugin::CSRFProtect
     -   YAML::Tiny
     -   Test::DBIx::Class   <- めっちゃでかい
     -   File::MMagic
