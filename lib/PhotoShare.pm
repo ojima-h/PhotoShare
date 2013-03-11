@@ -13,6 +13,8 @@ sub startup {
   $self->helper(model => sub { $model });
   $self->config( $model->config );
 
+  $self->config(hypnotoad => {listen => ['http://*:8888']});
+
   # Documentation browser under "/perldoc"
   $self->plugin('PODRenderer');
 

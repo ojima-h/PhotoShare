@@ -8,10 +8,10 @@ SET foreign_key_checks=0;
 -- Table: `events`
 --
 CREATE TABLE `events` (
-  `id` integer NOT NULL,
-  `name` text NOT NULL,
+  `id` integer NOT NULL AUTO_INCREMENT,
+  `name` char(255) NOT NULL,
   `group_id` integer NOT NULL,
-  `passphrase` text NULL,
+  `passphrase` char(255) NULL,
   INDEX `events_idx_group_id` (`group_id`),
   PRIMARY KEY (`id`),
   UNIQUE `events_name` (`name`),
@@ -21,8 +21,8 @@ CREATE TABLE `events` (
 -- Table: `groups`
 --
 CREATE TABLE `groups` (
-  `id` integer NOT NULL,
-  `name` text NOT NULL,
+  `id` integer NOT NULL AUTO_INCREMENT,
+  `name` char(255) NOT NULL,
   `default_event_id` integer NULL,
   INDEX `groups_idx_default_event_id` (`default_event_id`),
   PRIMARY KEY (`id`),
@@ -33,8 +33,8 @@ CREATE TABLE `groups` (
 -- Table: `photos`
 --
 CREATE TABLE `photos` (
-  `id` integer NOT NULL,
-  `content_type` string NOT NULL,
+  `id` integer NOT NULL AUTO_INCREMENT,
+  `content_type` char(127) NOT NULL,
   `event_id` integer NOT NULL,
   INDEX `photos_idx_event_id` (`event_id`),
   PRIMARY KEY (`id`),
@@ -44,10 +44,10 @@ CREATE TABLE `photos` (
 -- Table: `users`
 --
 CREATE TABLE `users` (
-  `id` integer NOT NULL,
-  `name` text NOT NULL,
-  `email` text NOT NULL,
-  `password` text NOT NULL,
+  `id` integer NOT NULL AUTO_INCREMENT,
+  `name` char(255) NOT NULL,
+  `email` char(255) NOT NULL,
+  `password` char(255) NOT NULL,
   `default_group_id` integer NULL,
   INDEX `users_idx_default_group_id` (`default_group_id`),
   PRIMARY KEY (`id`),

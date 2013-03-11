@@ -22,11 +22,14 @@ How to Install
 
     -   Mojolicious
     -   DBIx::Class
+    -   DBIx::Class::Migration
+    -   DBD::mysql
     -   Mojolicious::Plugin::Authentication
     -   YAML::Tiny
     -   Test::DBIx::Class   <- めっちゃでかい
     -   File::MMagic
     -   Email::Sender::Transport::SMTP
+    -   Net::SMTP::SSL
     -   Authen::SASL
     -   MIME::Base64
     -   IO::Scalar

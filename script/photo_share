@@ -10,6 +10,7 @@ use lib "$FindBin::Bin/../lib";
 require Mojolicious::Commands;
 
 $ENV{MOJO_APP_ROOT} = "$FindBin::Bin/../lib";
+$ENV{MOJO_CONFIG_FILE} = "$FindBin::Bin/../config.yml";
 
 if (defined $ARGV[0] and $ARGV[0] eq 'test') {
   $ENV{MOJO_MODE} = 'test';
