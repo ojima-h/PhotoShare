@@ -6,8 +6,13 @@ sub create {
   my $token = $self->param('token');
   my $signup_info = $self->session('signup_info');
 
-  unless ($signup_info) {
+  unless (defined $signup_info) {
     $self->flash('alert-error' => "セッションの有効期限が切れています");
+    return $self->redirect_to('/signup');
+  }
+
+  unless ($signup_info->{token} eq $token) {
+    $self->flash('alert-error' => "無効なセッションです");
     return $self->redirect_to('/signup');
   }
 
